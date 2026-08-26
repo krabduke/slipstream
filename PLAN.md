@@ -2,7 +2,7 @@
 
 **A free, open-source, hosted copy-trading and manual-trading terminal for Hyperliquid and Polymarket.**
 
-Follow any wallet on either venue, mirror it with real risk controls, and trade manually from the same screen. MIT licensed, zero fees, no token, no premium tier. Hosted at slipstream (Vercel + a worker host) and equally runnable with `docker compose up` on your own box.
+Follow any wallet on either venue, mirror it with real risk controls, and trade manually from the same screen. MIT licensed, zero fees, no token, no premium tier. Hosted at `slipstream.k2capitalmanagement.xyz` (Vercel + a worker host) and equally runnable with `docker compose up` on your own box.
 
 **The one-sentence differentiator:** every other tool in this space asks for a private key that can drain your account. Slipstream structurally cannot move your money — it only accepts delegated trading keys that both venues make un-withdrawable at the protocol level, and it refuses to store anything else.
 
