@@ -1,0 +1,16 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+allowBuilds:
+  esbuild: set this to true or false
+
+# Build scripts are blocked by default in pnpm 10+. This is the deliberate
+# exception list — a package must be named here to run install scripts.
+onlyBuiltDependencies:
+  - esbuild
+
+# pnpm re-checks install state before every script run. esbuild's build-script
+# notice makes that check exit non-zero even when the binary is present and
+# working, which would break every `pnpm test` / `pnpm typecheck` in CI.
+verifyDepsBeforeRun: false
