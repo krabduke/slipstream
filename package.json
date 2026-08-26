@@ -11,7 +11,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "db:generate": "drizzle-kit generate --config packages/db/drizzle.config.ts",
+    "db:migrate": "drizzle-kit migrate  --config packages/db/drizzle.config.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
@@ -21,6 +23,8 @@
     "typescript-eslint": "^8.18.1",
     "prettier": "^3.4.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "fast-check": "^3.23.1",
+    "drizzle-kit": "^0.30.1"
   }
 }
