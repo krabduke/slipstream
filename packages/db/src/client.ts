@@ -1,7 +1,10 @@
-/** W2 — Drizzle client. Every query helper takes an explicit userId; there is
- *  no unscoped helper to reach for. See docs/04 §5. */
-import { notImplemented } from "@slipstream/shared/notimpl.js"
+// W2 worker territory — implementation in progress.
+// Stub written first per working method; filled in after reading schema + docs.
 
-export type Db = { readonly __db: unique symbol }
+export interface CreateDbOptions {
+  readonly connectionString?: string;
+}
 
-export const createDb = (_url: string): Db => notImplemented("W2", "createDb")
+export function createDb(_options: CreateDbOptions | string = {}): never {
+  throw new Error("wip");
+}
