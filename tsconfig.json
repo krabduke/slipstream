@@ -1,40 +1,80 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "lib": ["ES2023"],
+    "lib": [
+      "ES2023",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["node"],
-
+    "types": [
+      "node"
+    ],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-
     "baseUrl": ".",
     "paths": {
-      "@slipstream/shared": ["packages/shared/src/index.ts"],
-      "@slipstream/shared/*": ["packages/shared/src/*"],
-      "@slipstream/venues": ["packages/venues/src/index.ts"],
-      "@slipstream/venues/*": ["packages/venues/src/*"],
-      "@slipstream/vault": ["packages/vault/src/index.ts"],
-      "@slipstream/risk": ["packages/risk/src/index.ts"],
-      "@slipstream/copy": ["packages/copy/src/index.ts"],
-      "@slipstream/exec": ["packages/exec/src/index.ts"],
-      "@slipstream/tracker": ["packages/tracker/src/index.ts"],
-      "@slipstream/db": ["packages/db/src/index.ts"],
-      "@slipstream/testkit": ["packages/testkit/src/index.ts"],
-      "@slipstream/notify": ["packages/notify/src/index.ts"]
-    }
+      "@slipstream/shared": [
+        "packages/shared/src/index.ts"
+      ],
+      "@slipstream/shared/*": [
+        "packages/shared/src/*"
+      ],
+      "@slipstream/venues": [
+        "packages/venues/src/index.ts"
+      ],
+      "@slipstream/venues/*": [
+        "packages/venues/src/*"
+      ],
+      "@slipstream/vault": [
+        "packages/vault/src/index.ts"
+      ],
+      "@slipstream/risk": [
+        "packages/risk/src/index.ts"
+      ],
+      "@slipstream/copy": [
+        "packages/copy/src/index.ts"
+      ],
+      "@slipstream/exec": [
+        "packages/exec/src/index.ts"
+      ],
+      "@slipstream/tracker": [
+        "packages/tracker/src/index.ts"
+      ],
+      "@slipstream/db": [
+        "packages/db/src/index.ts"
+      ],
+      "@slipstream/testkit": [
+        "packages/testkit/src/index.ts"
+      ],
+      "@slipstream/notify": [
+        "packages/notify/src/index.ts"
+      ],
+      "@/*": [
+        "apps/web/src/*"
+      ]
+    },
+    "jsx": "preserve"
   },
-  "include": ["packages/*/src/**/*.ts", "apps/*/src/**/*.ts", "scripts/**/*.ts"],
-  "exclude": ["node_modules", "**/dist", "**/.next"]
+  "include": [
+    "packages/*/src/**/*.ts",
+    "apps/*/src/**/*.ts",
+    "apps/*/src/**/*.tsx",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/dist",
+    "**/.next"
+  ]
 }

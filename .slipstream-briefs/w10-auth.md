@@ -2,7 +2,7 @@
 
 ## Decision (already made — implement, do not revisit)
 
-Implement Sign-In With Ethereum (EIP-4361) for the Next.js control plane. **`apps/web` does not exist yet — you are creating it.** Scaffold the minimum Next.js 15 App Router app needed to host the auth routes: `apps/web/package.json` is the ONE package.json you may create (nothing else may edit any package.json). Keep dependencies to `next`, `react`, `react-dom`, `viem`, `zod`, `jose`. If installing is not possible, write the code so it compiles against the types and say so in your final message.
+Implement Sign-In With Ethereum (EIP-4361) for the Next.js control plane. **`apps/web` already exists** — the Next.js 15 App Router scaffold, layout and dependencies (`next`, `react`, `react-dom`, `viem`, `zod`, `jose`) are in place. Do not create or edit any `package.json`, `next.config.ts`, `tsconfig.json`, or `layout.tsx`. Write only the auth library and the auth routes.
 
 Flow:
 1. `GET /api/auth/nonce` → generate a random nonce (≥8 alphanumeric chars), store it in Postgres `siwe_nonces` with a short expiry, return it.
@@ -15,12 +15,8 @@ Also implement **step-up**: `requireFreshSignature(req)`, which demands a SIWE s
 
 ## Files you own
 ```
-apps/web/package.json          (the only package.json you may create)
-apps/web/next.config.ts
-apps/web/tsconfig.json
 apps/web/src/lib/auth/**
 apps/web/src/app/api/auth/**
-apps/web/src/app/layout.tsx    (minimal — visual design is Opus's, keep it bare)
 ```
 
 ## Out of scope — do not edit

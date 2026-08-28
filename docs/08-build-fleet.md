@@ -4,11 +4,15 @@ How Slipstream gets built: ~20 delegated workers on Ox Alpha, in four waves, wit
 
 ## 1. The worker model
 
-**Primary: `opencode/x-preview-f-free`** — "Ox Alpha Free (Unlimited)" on OpenCode Zen. 1,048,576-token context, 131,072 max completion, multimodal, **zero data retention and no training** on Zen, effectively unmetered.
+**Primary: `dashscope/qwen3.8-max`** — the Alibaba Token Plan subscription. Proven under load: two prior measured runs absorbed 1.2M input and 15M cache reads with zero 429s. Verified working here on 2026-08-26 with 7 concurrent workers.
 
-**Fallback: `dashscope/qwen3.8-max`** — the existing Alibaba Token Plan route, already configured in `~/.config/opencode/opencode.json`.
+**~~Ox Alpha (`opencode/x-preview-f-free`)~~ — WITHDRAWN 2026-08-26.** It was the original plan: 1M context, multimodal, zero data retention, free. OpenCode removed it from the Zen roster exactly one week after announcing the free preview. Every worker then failed in under a second with `Model not found`, behind a generic `UnknownError` first line that reads like a transient outage. Independently confirmed by the parallel legios-research fleet, which measured a 3% error rate over 73,774 streams before it vanished.
 
-**Why the fallback is written into the plan and not left implicit:** Ox Alpha is an unattributed stealth preview that OpenCode announced as free "for the next week" on ~20 August 2026. That window may close mid-build. Every brief in `.slipstream-briefs/` is model-agnostic prose, and the model is a single flag on the invocation, so a fleet mid-wave migrates by changing `-m`. No brief may contain model-specific instructions.
+**Free alternatives, measured on this machine by the legios-research session (2026-08-26):** `muse-spark-1.2-contributor-free` (1M context, 131k out, 176 streams / 0 errors) is the strongest; `nemotron-3-ultra-free` is free but effectively unusable, at 130 stream errors in 343 (37%, provider-side 502/504). Treat any replacement's error rate as unproven until a few thousand streams.
+
+**Fallback: `opencode/muse-spark-1.2-contributor-free`** — free, 1M context, best-measured of the remaining Zen models.
+
+**Why the fallback is written into the plan and not left implicit:** this already happened. Ox Alpha was withdrawn mid-build, six days after launch. Every brief in `.slipstream-briefs/` is model-agnostic prose, and the model is a single flag on the invocation, so a fleet mid-wave migrates by changing `-m`. No brief may contain model-specific instructions.
 
 **Invocation:**
 ```bash

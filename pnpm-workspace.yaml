@@ -4,6 +4,7 @@ packages:
 
 allowBuilds:
   esbuild: set this to true or false
+  sharp: set this to true or false
 
 # Build scripts are blocked by default in pnpm 10+. This is the deliberate
 # exception list — a package must be named here to run install scripts.

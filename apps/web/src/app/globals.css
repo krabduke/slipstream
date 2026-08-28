@@ -1,0 +1,159 @@
+/* =========================================================================
+   Slipstream design tokens.
+
+   Colour discipline — the rule the whole palette hangs on:
+   THREE signal hues, each with exactly ONE meaning.
+     green  = positive PnL / long
+     red    = negative PnL / short
+     amber  = HELD. A skipped copy, a gate that fired, a kill switch.
+              A skip is the system working correctly, not failing, so it must
+              never wear red.
+   Interaction is expressed through LUMINANCE and BORDER, never a fourth hue.
+   An instrument panel signals "active" by illuminating, not by changing colour.
+
+   Never use a signal hue for branding, decoration, or hover.
+   ========================================================================= */
+
+:root {
+  /* light is the base definition; every token is defined here */
+  --surface-0: #f1f4f7;
+  --surface-1: #ffffff;
+  --surface-2: #e6ebf1;
+  --surface-sunk: #dde4ec;
+  --line: #cfd8e2;
+  --line-strong: #aab7c6;
+
+  --text-hi: #101720;
+  --text-lo: #52616f;
+  --text-dim: #7d8b99;
+
+  --long: #14794a;
+  --short: #bd2b31;
+  --held: #8f5e0d;
+
+  --long-wash: #14794a1a;
+  --short-wash: #bd2b311a;
+  --held-wash: #8f5e0d14;
+
+  --focus: #101720;
+
+  --font-ui: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --step--1: 0.75rem;
+  --step-0: 0.875rem;
+  --step-1: 1rem;
+  --step-2: 1.375rem;
+  --step-3: 2rem;
+  --step-4: 3rem;
+
+  --gap-1: 0.25rem;
+  --gap-2: 0.5rem;
+  --gap-3: 0.875rem;
+  --gap-4: 1.5rem;
+  --gap-5: 2.5rem;
+
+  --radius: 3px;
+  --band-h: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface-0: #0f1419;
+    --surface-1: #161d24;
+    --surface-2: #1e2730;
+    --surface-sunk: #0a0e12;
+    --line: #2a343f;
+    --line-strong: #3d4a58;
+
+    --text-hi: #e7edf3;
+    --text-lo: #93a1b0;
+    --text-dim: #64727f;
+
+    --long: #35c07a;
+    --short: #ef5350;
+    --held: #e0a13c;
+
+    --long-wash: #35c07a1f;
+    --short-wash: #ef53501f;
+    --held-wash: #e0a13c1a;
+
+    --focus: #e7edf3;
+  }
+}
+
+:root[data-theme="dark"] {
+  --surface-0: #0f1419;
+  --surface-1: #161d24;
+  --surface-2: #1e2730;
+  --surface-sunk: #0a0e12;
+  --line: #2a343f;
+  --line-strong: #3d4a58;
+
+  --text-hi: #e7edf3;
+  --text-lo: #93a1b0;
+  --text-dim: #64727f;
+
+  --long: #35c07a;
+  --short: #ef5350;
+  --held: #e0a13c;
+
+  --long-wash: #35c07a1f;
+  --short-wash: #ef53501f;
+  --held-wash: #e0a13c1a;
+
+  --focus: #e7edf3;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--surface-0);
+  color: var(--text-hi);
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis-weight: none;
+}
+
+/* Every number in this product is tabular. Financial data that changes width
+   as it ticks is data people stop trusting. */
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.01em;
+}
+
+.sig-long  { color: var(--long); }
+.sig-short { color: var(--short); }
+.sig-held  { color: var(--held); }
+
+/* Signage voice — Archivo's width axis, used only for structural labels. */
+.eyebrow {
+  font-family: var(--font-ui);
+  font-variation-settings: "wdth" 112;
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+a { color: inherit; }
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

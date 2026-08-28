@@ -1,0 +1,147 @@
+/* Component layer. Tokens live in globals.css; nothing here defines a colour. */
+
+:root {
+  --font-ui: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-num: var(--font-plex-mono), ui-monospace, Menlo, monospace;
+}
+
+.shell {
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: var(--gap-5) var(--gap-4) 6rem;
+}
+
+/* ── Annunciator band ─────────────────────────────────────────────────────
+   Persistent, always visible, always tells the truth. Not a nav bar with a
+   logo — a status strip. If it cannot confirm something, it says so rather
+   than rendering a confident stale number. */
+
+.band {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-height: var(--band-h);
+  background: var(--surface-sunk);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.band::-webkit-scrollbar { display: none; }
+
+.band-mark {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--gap-3);
+  font-variation-settings: "wdth" 118;
+  font-weight: 700;
+  font-size: var(--step-0);
+  letter-spacing: 0.02em;
+  border-right: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  padding: 0.3rem var(--gap-3);
+  border-right: 1px solid var(--line);
+  white-space: nowrap;
+}
+.cell-k {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.cell-v { font-size: var(--step-0); font-weight: 500; }
+
+/* Lamp: an annunciator signals state by illuminating, never by changing hue
+   for decoration. */
+.lamp { display: inline-flex; align-items: center; gap: 0.4rem; }
+.lamp::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 22%, transparent);
+}
+.lamp-ok   { color: var(--long); }
+.lamp-held { color: var(--held); }
+.lamp-down { color: var(--short); }
+.lamp-idle { color: var(--text-dim); }
+
+/* Meter: exposure against cap. Fills toward the cap; never past it visually. */
+.meter { width: 5.5rem; height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+.meter-fill { height: 100%; background: currentColor; }
+
+/* Paper mode is STRUCTURAL, not a badge. Mistaking paper for live is the
+   catastrophic failure in this product, so it changes the chrome itself. */
+.band[data-mode="paper"] {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 7px,
+    var(--held-wash) 7px 14px
+  );
+}
+.band[data-mode="paper"] .band-mark::after {
+  content: "PAPER";
+  margin-left: var(--gap-2);
+  padding: 1px 5px;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--held);
+  border: 1px solid var(--held);
+  border-radius: var(--radius);
+}
+
+/* ── Decision ledger ──────────────────────────────────────────────────────
+   The signature. Competing products show fills and hide skips. Here a skip is
+   typographically LOUDER than a fill: it carries the blocking number at
+   display size, because "we declined, and here is why" is the product. */
+
+.ledger { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+
+.row { display: grid; grid-template-columns: 5.5rem 1fr auto; gap: var(--gap-3); align-items: start; padding: var(--gap-3); background: var(--surface-1); }
+.row-time { font-size: var(--step--1); color: var(--text-dim); padding-top: 2px; }
+.row-body { min-width: 0; }
+.row-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--gap-2); }
+.row-venue {
+  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em;
+  padding: 1px 5px; border-radius: var(--radius);
+  border: 1px solid var(--line-strong); color: var(--text-lo);
+}
+.row-market { font-weight: 600; font-size: var(--step-1); }
+.row-lead { color: var(--text-lo); font-size: var(--step-0); margin-top: 2px; }
+
+/* A copy or an exit: stated plainly, quietly. */
+.row[data-verdict="copied"] .row-verdict,
+.row[data-verdict="exited"] .row-verdict {
+  font-size: var(--step-0); color: var(--text-lo);
+}
+
+/* A skip: the loud one. */
+.row[data-verdict="skipped"] { background: var(--held-wash); border-left: 2px solid var(--held); }
+.row[data-verdict="skipped"] .row-verdict { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.row-refusal { font-size: var(--step-2); font-weight: 600; color: var(--held); line-height: 1.1; }
+.row-because { font-size: var(--step--1); color: var(--text-lo); text-align: right; max-width: 20rem; }
+
+.row-amount { text-align: right; font-size: var(--step-1); font-weight: 500; }
+
+@media (max-width: 46rem) {
+  .row { grid-template-columns: 1fr; gap: var(--gap-2); }
+  .row[data-verdict="skipped"] .row-verdict { align-items: flex-start; }
+  .row-because { text-align: left; }
+  .row-amount { text-align: left; }
+}
+
+/* ── Section furniture ───────────────────────────────────────────────────── */
+.section { margin-top: var(--gap-5); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--gap-3); margin-bottom: var(--gap-3); }
+.section-title { font-size: var(--step-2); font-weight: 600; font-variation-settings: "wdth" 108; margin: 0; }
+.section-note { font-size: var(--step--1); color: var(--text-dim); max-width: 34rem; }
