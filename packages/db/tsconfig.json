@@ -1,0 +1,8 @@
+{
+  "//": "Exists for one reason: drizzle-kit transpiles drizzle.config.ts with a bundled esbuild 0.19, which rejects the root config's `target: ES2023`. esbuild-register reads the nearest tsconfig.json to the config file without resolving `extends`, so this file pins a target it accepts. Everything else is inherited from the root config, including `paths`.",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022"
+  },
+  "include": ["src/**/*.ts", "drizzle.config.ts"]
+}
