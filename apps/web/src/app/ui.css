@@ -112,12 +112,13 @@
 .row-body { min-width: 0; }
 .row-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--gap-2); }
 .row-venue {
+  align-self: center;
   font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em;
   padding: 1px 5px; border-radius: var(--radius);
   border: 1px solid var(--line-strong); color: var(--text-lo);
 }
-.row-market { font-weight: 600; font-size: var(--step-1); }
-.row-lead { color: var(--text-lo); font-size: var(--step-0); margin-top: 2px; }
+.row-market { margin: 0; font-weight: 600; font-size: var(--step-1); line-height: 1.25; }
+.row-lead { margin: 3px 0 0; color: var(--text-lo); font-size: var(--step-0); line-height: 1.4; }
 
 /* A copy or an exit: stated plainly, quietly. */
 .row[data-verdict="copied"] .row-verdict,
@@ -126,10 +127,10 @@
 }
 
 /* A skip: the loud one. */
-.row[data-verdict="skipped"] { background: var(--held-wash); border-left: 2px solid var(--held); }
+.row[data-verdict="skipped"] { background: var(--held-wash); box-shadow: inset 3px 0 0 var(--held); }
 .row[data-verdict="skipped"] .row-verdict { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
 .row-refusal { font-size: var(--step-2); font-weight: 600; color: var(--held); line-height: 1.1; }
-.row-because { font-size: var(--step--1); color: var(--text-lo); text-align: right; max-width: 20rem; }
+.row-because { font-size: var(--step--1); color: var(--text-lo); text-align: right; max-width: 22rem; line-height: 1.35; }
 
 .row-amount { text-align: right; font-size: var(--step-1); font-weight: 500; }
 
@@ -142,6 +143,7 @@
 
 /* ── Section furniture ───────────────────────────────────────────────────── */
 .section { margin-top: var(--gap-5); }
-.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--gap-3); margin-bottom: var(--gap-3); }
-.section-title { font-size: var(--step-2); font-weight: 600; font-variation-settings: "wdth" 108; margin: 0; }
-.section-note { font-size: var(--step--1); color: var(--text-dim); max-width: 34rem; }
+.section .eyebrow { display: block; margin-bottom: var(--gap-2); }
+.section-head { display: flex; margin-bottom: var(--gap-2); align-items: baseline; justify-content: space-between; gap: var(--gap-3); margin-bottom: var(--gap-3); }
+.section-title { margin: 0 0 var(--gap-2); font-size: var(--step-3); font-weight: 600; font-variation-settings: "wdth" 106; letter-spacing: -0.015em; line-height: 1.1; }
+.section-note { margin: 0; font-size: var(--step-0); color: var(--text-lo); max-width: 38rem; line-height: 1.5; }
