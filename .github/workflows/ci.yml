@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: lint / typecheck / test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # The local stack is infra's contract (docs/01 §4 portability rule);
+      # cheap to prove it parses before anything else runs.
+      - name: Validate docker-compose
+        run: docker compose -f infra/docker-compose.yml config --quiet
+
+      # pnpm via corepack: the version is pinned by package.json
+      # ("packageManager"), so CI can never drift from local.
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm # caches the pnpm *store*; node_modules is never cached
+
+      - name: Install dependencies
+        # --frozen-lockfile so CI fails on lockfile drift instead of silently
+        # resolving forward. ERR_PNPM_IGNORED_BUILDS is settled for good in
+        # pnpm-workspace.yaml (allowBuilds decisions), not with --ignore-scripts
+        # or `|| true` — the esbuild postinstall genuinely runs here.
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test

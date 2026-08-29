@@ -1,0 +1,96 @@
+# Local development stack for k2.
+#
+# Portability rule (docs/01-architecture.md §4): everything here is stock
+# Postgres 16 and Redis 7 on plain Docker. No Vercel KV / Blob, no
+# edge-runtime assumptions — the same services run unchanged on any host
+# that has Docker.
+#
+# Start:  docker compose -f infra/docker-compose.yml up -d
+# Stop:   docker compose -f infra/docker-compose.yml down
+# Wipe:   docker compose -f infra/docker-compose.yml down -v
+#
+# Host ports are deliberately offset (55432 / 56379) so they do not collide
+# with a typical local Postgres/Redis already listening on 5432 / 6379.
+# Local connection strings:
+#   DATABASE_URL=postgres://k2:***@localhost:55432/k2
+#   REDIS_URL=redis://localhost:56379
+
+name: k2
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: k2-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: k2
+      POSTGRES_PASSWORD: k2
+      POSTGRES_DB: k2
+    ports:
+      - "55432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # pg_isready, not a TCP probe: proves the server accepts queries,
+      # not merely that the container process exists.
+      test: ["CMD-SHELL", "pg_isready -U k2 -d k2"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: k2-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "56379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  postgres-data:
+  redis-data:
+
+# ---------------------------------------------------------------------------
+# web and engine services land in later waves (see docs/06-roadmap.md).
+# They are declared here, commented out, so the topology is visible but
+# `docker compose up` does not reference images that do not exist yet.
+# When enabled, depends_on with service_healthy conditions wires them to the
+# datastores above.
+#
+#   web:
+#     build:
+#       context: ..
+#       dockerfile: infra/Dockerfile.web
+#     ports:
+#       - "3000:3000"
+#     environment:
+#       DATABASE_URL: postgres://k2:***@postgres:5432/k2
+#       REDIS_URL: redis://redis:6379
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#       redis:
+#         condition: service_healthy
+#
+#   engine:
+#     build:
+#       context: ..
+#       dockerfile: infra/Dockerfile.engine
+#     environment:
+#       DATABASE_URL: postgres://k2:***@postgres:5432/k2
+#       REDIS_URL: redis://redis:6379
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#       redis:
+#         condition: service_healthy
+# ---------------------------------------------------------------------------

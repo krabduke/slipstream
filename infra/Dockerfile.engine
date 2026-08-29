@@ -1,0 +1,59 @@
+# syntax=docker/dockerfile:1
+#
+# Engine image — long-lived trading process (docs/01-architecture.md §1).
+# Rules this image keeps:
+#   * Portability: plain Node 22 on alpine, no Vercel/edge assumptions. The
+#     same image runs on Fly, Railway, Hetzner, or a laptop.
+#   * Non-root: this container ends up holding decrypt rights (docs/04).
+#     A root process with key material is the exact combination the security
+#     model forbids — the image runs as the "node" user (uid 1000).
+#   * No dev dependencies in the final layer: `pnpm deploy --prod` assembles
+#     a self-contained prod-only tree; dev deps never cross into the image.
+#   * Multi-stage: toolchain, store, and source never reach what ships.
+#
+# STATUS: the engine app itself (apps/engine) lands in a later wave per
+# docs/06-roadmap.md, so nothing references this file yet — the engine
+# service in infra/docker-compose.yml is declared but commented out. The
+# three TODO markers below bind the real package name, artifact path, and
+# entrypoint when that wave lands; everything else is final.
+
+FROM node:22-alpine AS base
+ENV PNPM_HOME=/pnpm \
+    COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV PATH="$PNPM_HOME:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+WORKDIR /repo
+# corepack enable only installs the shims; the pinned pnpm (package.json
+# "packageManager") is fetched on first invocation, after the manifests are
+# copied. Download prompt is disabled via COREPACK_ENABLE_DOWNLOAD_PROMPT.
+RUN corepack enable
+
+# ---- build + bundle: compile, then flatten to a prod-only app tree --------
+FROM base AS bundle
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    --mount=type=cache,id=corepack,target=/root/.cache/node/corepack \
+    pnpm install --frozen-lockfile
+RUN pnpm -r --if-present build
+# TODO(engine wave): confirm the real package name for --filter.
+# pnpm deploy hardlinks a complete, prod-only node_modules layout for the
+# target app (workspace deps included) into /bundle — this is also what
+# fails (loudly, at build time) until apps/engine exists.
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm deploy --filter @slipstream/engine --prod /bundle
+
+# ---- runner: fresh stage, only the bundle crosses into the image -----------
+FROM node:22-alpine AS runner
+ENV NODE_ENV=production
+WORKDIR /app
+
+COPY --from=bundle --chown=node:node /bundle ./
+USER node
+
+# TODO(engine wave): point at the real entrypoint, e.g.
+# CMD ["node", "dist/main.js"]  (paths inside /bundle are flat post-deploy)
+# No HEALTHCHECK here on purpose: docs/01 §6 demands health checks that mean
+# something (leader event age, WS connection age, reconciler drift) — those
+# endpoints exist only once the engine is running. A HEALTHCHECK on a port
+# nobody listens on is the green-tick lie §6 warns about; wire the real one
+# into the commented compose `engine` service in the same wave.
+CMD ["node", "--version"]

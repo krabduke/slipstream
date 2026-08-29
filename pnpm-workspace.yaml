@@ -2,12 +2,21 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# pnpm 11 requires an explicit true/false decision for every dependency with
+# a build script. Placeholder values are NOT decisions — pnpm 11 exits 1 with
+# ERR_PNPM_IGNORED_BUILDS for anything undecided, which fails CI at the very
+# first step. These are the decisions:
+#   esbuild: true  — tsx/vitest need the platform binary wired up.
+#   sharp: false   — transitive Next.js image-optimizer dep; sharp >=0.33
+#                    ships prebuilt binaries via @img/* optional packages and
+#                    its install script is only a check, so it is deliberately
+#                    kept unbuilt.
 allowBuilds:
-  esbuild: set this to true or false
-  sharp: set this to true or false
+  esbuild: true
+  sharp: false
 
-# Build scripts are blocked by default in pnpm 10+. This is the deliberate
-# exception list — a package must be named here to run install scripts.
+# Kept in sync with allowBuilds (the pre-pnpm-11 spelling of the same
+# allowlist) so tooling on pnpm 10 agrees with 11.
 onlyBuiltDependencies:
   - esbuild
 

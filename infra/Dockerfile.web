@@ -1,0 +1,10 @@
+# syntax=docker/dockerfile:1
+# Stub — the web app does not exist yet.
+#
+# apps/web (Next.js) lands in a later wave per docs/06-roadmap.md. This
+# Dockerfile is intentionally not a working image: there is no app to build.
+# When apps/web exists, this becomes a multi-stage Next.js build
+# (standalone output) on Node 22 alpine, non-root, no Vercel-only runtime
+# assumptions — same portability rule as infra/docker-compose.yml.
+#
+# Tracked by the commented `web` service in infra/docker-compose.yml.

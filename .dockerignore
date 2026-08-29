@@ -1,0 +1,18 @@
+# Keep the Docker build context small and clean.
+# node_modules must never leak into an image — pnpm resolves deps inside
+# the build (hermetic), and a copied tree breaks platform-specific binaries.
+node_modules
+**/node_modules
+.git
+.github
+**/dist
+**/build
+**/.turbo
+**/coverage
+**/*.tsbuildinfo
+**/*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+**/docker-compose*.yml
