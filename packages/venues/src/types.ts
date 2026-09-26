@@ -179,8 +179,19 @@ export interface VenueAdapter {
 
   // --- write, authenticated ---
   placeOrder(key: SignerKey, order: OrderRequest): Promise<OrderResult>
-  cancelOrder(key: SignerKey, id: VenueOrderId): Promise<void>
-  closePosition(key: SignerKey, marketId: MarketId, size: Decimal | null): Promise<OrderResult>
+  /** Hyperliquid addresses a cancel by asset, so the market is required. */
+  cancelOrder(key: SignerKey, marketId: MarketId, id: VenueOrderId): Promise<void>
+  /** Reduce-only, aggressive (IOC with wide slippage): a partially filled
+   *  close is worse than a slightly worse price (docs/03 §5). `owner` is the
+   *  account whose position it is — the key is only its delegated agent.
+   *  `size` null closes the whole position. */
+  closePosition(
+    key: SignerKey,
+    owner: Address,
+    marketId: MarketId,
+    size: Decimal | null,
+    clientId: IdempotencyKey,
+  ): Promise<OrderResult>
 
   // --- key lifecycle ---
   /** Runs BEFORE a key is ever written to storage. Fails closed: any error is

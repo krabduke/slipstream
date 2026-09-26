@@ -120,12 +120,13 @@ export const buildCatalog = (
     })
   }
 
-  for (const asset of meta.universe) {
+  for (const [i, asset] of meta.universe.entries()) {
     add({
       marketId: asMarketId(asset.name),
       coin: asset.name,
       symbol: asset.name,
       kind: "perp",
+      assetIndex: i,
       szDecimals: asset.szDecimals,
       isDelisted: asset.isDelisted === true,
       constraints: buildConstraints("perp", asset.szDecimals, asset.maxLeverage),
@@ -149,6 +150,7 @@ export const buildCatalog = (
       // `pair.name` is `@107` for most pairs, which is an id and not a label.
       symbol: pair.isCanonical ? pair.name : `${base.name}/${quote.name}`,
       kind: "spot",
+      assetIndex: 10_000 + pair.index,
       // Size precision on a spot pair is the *base* token's.
       szDecimals: base.szDecimals,
       isDelisted: false,

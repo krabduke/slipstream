@@ -36,6 +36,7 @@ const spec = (
   coin: name,
   symbol: name,
   kind,
+  assetIndex: 0,
   szDecimals,
   isDelisted: false,
   constraints: buildConstraints(kind, szDecimals, maxLeverage),

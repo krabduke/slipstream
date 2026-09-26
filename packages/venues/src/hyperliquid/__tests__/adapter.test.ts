@@ -20,12 +20,10 @@ describe("the exported singleton", () => {
     expect(hyperliquidAdapter.id).toBe("hyperliquid")
   })
 
-  it("leaves the W11 write methods as stubs", () => {
-    expect(() => hyperliquidAdapter.placeOrder({} as never, {} as never)).toThrow(/Not implemented \(W11\)/)
-    expect(() => hyperliquidAdapter.cancelOrder({} as never, {} as never)).toThrow(/Not implemented \(W11\)/)
-    expect(() => hyperliquidAdapter.closePosition({} as never, {} as never, null)).toThrow(
-      /Not implemented \(W11\)/,
-    )
+  it("implements the write methods (write.ts; unit-tested in write.test.ts)", () => {
+    for (const m of ["placeOrder", "cancelOrder", "closePosition"] as const) {
+      expect(typeof hyperliquidAdapter[m]).toBe("function")
+    }
   })
 })
 

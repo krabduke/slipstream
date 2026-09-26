@@ -27,7 +27,8 @@ import {
   SubscriptionClient,
   WebSocketTransport,
 } from "@nktkas/hyperliquid"
-import { notImplemented } from "@slipstream/shared/notimpl.js"
+import { money } from "@slipstream/shared"
+import * as write from "./write.js"
 import type { MarketId } from "@slipstream/shared"
 import type { VenueAdapter } from "../types.js"
 import type { AssetSpec } from "./quantize.js"
@@ -43,6 +44,9 @@ import * as ws from "./ws.js"
  * about the correctness of an existing market's tick and lot.
  */
 export const DEFAULT_CATALOG_TTL_MS = 15 * 60 * 1000
+
+/** Exits cross the book aggressively (docs/03 §5): 3% of slippage room. */
+export const EXIT_SLIPPAGE_BPS = 300
 
 export interface HyperliquidAdapterOptions {
   /** Substitute for the `/info` client. Supplied by tests; defaults to HTTP. */
@@ -170,9 +174,32 @@ export const createHyperliquidAdapter = (
     rateBudget: (address) => read.rateBudget(info(), address),
 
     // --- W11 ---
-    placeOrder: () => notImplemented("W11", "hyperliquid.placeOrder"),
-    cancelOrder: () => notImplemented("W11", "hyperliquid.cancelOrder"),
-    closePosition: () => notImplemented("W11", "hyperliquid.closePosition"),
+    // --- write (see write.ts) ---
+    placeOrder: async (key, order) => {
+      const spec = read.lookupSpec(await warmUp(), order.marketId, "placeOrder")
+      const book = order.kind.type === "market" ? await read.getBook(info(), spec, 5) : null
+      return write.placeOrder(write.exchangeFor(key).exchange, spec, order, book)
+    },
+    cancelOrder: async (key, marketId, id) => {
+      const spec = read.lookupSpec(await warmUp(), marketId, "cancelOrder")
+      await write.cancelOrder(write.exchangeFor(key).exchange, spec, id)
+    },
+    closePosition: async (key, owner, marketId, size, clientId) => {
+      const spec = read.lookupSpec(await warmUp(), marketId, "closePosition")
+      const pos = (await read.getPositions(info(), owner)).find((p) => p.marketId === marketId)
+      if (!pos) {
+        return { venueOrderId: null, status: "rejected", filledSize: money.fromInt(0), avgPrice: null, rejectReason: "no open position" }
+      }
+      const book = await read.getBook(info(), spec, 5)
+      return write.placeOrder(write.exchangeFor(key).exchange, spec, {
+        marketId,
+        side: pos.side === "long" ? "sell" : "buy",
+        size: size === null ? pos.size : money.min(size, pos.size),
+        kind: { type: "market", maxSlippageBps: EXIT_SLIPPAGE_BPS },
+        reduceOnly: true,
+        clientId,
+      }, book)
+    },
 
     // --- lifecycle beyond the VenueAdapter contract ---
     warmUp,

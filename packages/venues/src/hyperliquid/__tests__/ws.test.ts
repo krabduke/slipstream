@@ -25,6 +25,7 @@ const BTC_SPEC: AssetSpec = {
   coin: "BTC",
   symbol: "BTC",
   kind: "perp",
+  assetIndex: 0,
   szDecimals: 5,
   isDelisted: false,
   constraints: buildConstraints("perp", 5, 40),

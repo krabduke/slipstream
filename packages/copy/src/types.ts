@@ -13,8 +13,10 @@
  * See docs/03 §2.
  */
 import type {
+  Address,
   Decimal,
   ExitIntent,
+  LeaderRef,
   MarketId,
   SizingMode,
   SkipDecision,
@@ -44,11 +46,23 @@ export interface PlanContext {
   readonly leaderEquity: Decimal | null
   readonly followerEquity: Decimal | null
   /**
-   * No correction is emitted below this. Without it, funding payments and mark
-   * drift generate a permanent trickle of dust orders that burn the per-address
-   * rate limit and pay fees for nothing. See docs/03 §2.
+   * Minimum notional (USD) of a correction. Nothing smaller is emitted, and a
+   * correction must also exceed 2% of the target position. Without it, funding
+   * payments and mark drift generate a permanent trickle of dust orders that
+   * burn the per-address rate limit and pay fees for nothing. See docs/03 §2.
    */
   readonly toleranceBand: Decimal
+  /** Current mark per market, for notional sizing and the tolerance band. */
+  readonly markPrices: ReadonlyMap<MarketId, Decimal>
+  /**
+   * The leader's most recent fill per market. It becomes the trade's
+   * `leaderRef`, which the signal-age and slippage gates judge. A market with
+   * no known fill gets a ref stamped at the leader position's entry and
+   * `now - staleAfterMs`, so the signal-age gate refuses to chase a position
+   * whose moment has passed (late joins, docs/03 §2).
+   */
+  readonly leaderFills: ReadonlyMap<MarketId, LeaderRef>
+  readonly leaderAddress: Address
 }
 
 /** Trades and exits are returned separately so callers cannot accidentally

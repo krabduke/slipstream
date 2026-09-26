@@ -71,6 +71,9 @@ export interface AssetSpec {
   /** Human-facing label. Never an identifier. */
   readonly symbol: string
   readonly kind: HyperliquidMarketKind
+  /** The `a` field of an order: perp = index in `meta.universe`, spot = 10000 +
+   *  index in `spotMeta.universe`. */
+  readonly assetIndex: number
   readonly szDecimals: number
   readonly isDelisted: boolean
   readonly constraints: MarketConstraints
