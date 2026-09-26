@@ -42,18 +42,31 @@ opening it to anyone else (docs/04 §7).
 
 ## Checklist
 
-- [x] Move out of `k2capital/`, repair worktrees (535 tests green)
-- [x] Vercel project + Supabase database, migrations applied, REST path closed
-- [x] `packages/intel`: metrics (time-weighted drawdown, round trips, consistency) + score
-- [x] Hyperliquid profiler (leaderboard -> candidates -> deep profile)
-- [ ] Polymarket profiler
-- [ ] Intel job: refresh -> `trader_profiles`, `intel_runs`
-- [ ] `apps/engine` skeleton on the VPS: scheduler, health, watchdog cron
-- [ ] Web: Traders (discover, filters), trader profile, landing
-- [ ] Auth: SIWE sessions
-- [ ] Hyperliquid agent key onboarding (browser-generated, approveAgent, sealed to engine)
-- [ ] Engine: leader watcher (HL WS, PM polling), planner, risk gate, paper executor, ledger
-- [ ] Engine: live Hyperliquid executor, reconciler, kill switches, dead-man switch
-- [ ] Web: dashboard, follows, activity ledger, settings, onboarding wizard
-- [ ] Deploy web to Vercel + subdomain; engine on VPS; monitoring
+- [x] Move out of `k2capital/`, repair worktrees
+- [x] Vercel project (k2man1) + Supabase via Marketplace; migrations; REST path closed (RLS on every table)
+- [x] `packages/intel`: metrics (time-weighted drawdown, round trips, consistency), decomposed score, copy flags
+- [x] Hyperliquid + Polymarket profilers; engine intel job (6h per venue, batched writes, resumable, scheduled from last finished run)
+- [x] Web: Traders (per venue), profiles, method, landing; live status band from the engine heartbeat
+- [x] Auth: SIWE sessions (single-use nonces, replay refused)
+- [x] Copy planner + sizing (fail closed), risk gates (existing), paper executor (walks live books, pessimistic)
+- [x] Hyperliquid order placement via SDK + viem (hand-rolled crypto from the fleet discarded)
+- [x] Engine copy loop: HL every 10s + on leader fills (WebSocket), PM every 30s; ledger; kill switches incl. flatten; stop = flatten then end
+- [x] Key custody: browser seals agent keys to the engine's RSA key (generated on the VPS); server verifies delegation on Hyperliquid before storing; engine re-verifies before use
+- [x] Web: follow panel, Following (paper P&L, pause/resume/stop, panic), Activity ledger, Settings (connect/replace/remove key), go-live with step-up signature
+- [x] E2E verified: paper copy on HL (fresh fill -> gates -> fill), PM cycle, signed-in web flow, key-refusal tests
+- [x] Monitoring: K2 freshness monitor checks the engine process; watchdog cron restarts it
+- [ ] Operator: set `LIVE_OWNER_ADDRESSES` in Vercel to the operator's wallet(s) to enable live trading
+- [ ] Risk-limit editor in Settings (defaults apply until then: $1,000 / 20% per position, 50% exposure, 3x, daily loss 10%)
 - [ ] (Deferred by owner) live Polymarket trading
+
+## Operations
+
+| What | Where | How |
+|---|---|---|
+| Website | Vercel project `slipstream` (k2man1) | `vercel deploy --prod --yes` from the repo root |
+| Engine | VPS `~/slipstream-engine/` (Node 22 in `~/.local/node`) | `node apps/engine/build.mjs`, rsync `apps/engine/dist/engine.mjs*`, then `stop-engine.sh; run-engine.sh` on the VPS |
+| Engine keepalive | VPS crontab | `run-engine.sh` every 5 min + `@reboot`; tracks the process by `engine.pid` |
+| Engine secrets | VPS `~/slipstream-engine/.env` (600), `engine-key.pk8` (600) | the private key never leaves the VPS; the public half is `NEXT_PUBLIC_ENGINE_PUBLIC_KEY` in Vercel |
+| Database | Supabase `slipstream-db` (us-east-1) | `DATABASE_URL=$POSTGRES_URL_NON_POOLING pnpm db:migrate`; every new table needs an RLS line (test enforces) |
+| One-off jobs | VPS | `node engine.mjs --once intel:hl|intel:pm|copy:hl|copy:pm` (with `.env` sourced) |
+| Logs | VPS `~/slipstream-engine/logs/` | rotated nightly by `~/dev/ops/logrotate.conf` |

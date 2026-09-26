@@ -4,7 +4,7 @@
 
 Follow any wallet on either venue, mirror it with real risk controls, and trade manually from the same screen. MIT licensed, zero fees, no token, no premium tier.
 
-> **Status: planning. No application code exists yet.** Start with [PLAN.md](PLAN.md).
+> **Status (2026-09-26): running.** Live at [slipstream.k2capitalmanagement.xyz](https://slipstream.k2capitalmanagement.xyz): trader intelligence for Hyperliquid and Polymarket, and paper copy trading on both. Live copy trading works on Hyperliquid for allowlisted wallets. Live Polymarket trading is not built (geoblocked for the operator). See [docs/BUILD.md](docs/BUILD.md) for what exists and [PLAN.md](PLAN.md) for the original design.
 
 ## Why this exists
 
