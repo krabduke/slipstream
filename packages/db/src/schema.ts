@@ -389,3 +389,41 @@ export const intelRuns = pgTable(
   (t) => [index("intel_runs_venue_started_idx").on(t.venue, t.startedAt)],
 )
 
+// ── Paper trading ────────────────────────────────────────────────────────────
+//
+// Each paper subscription trades its own simulated book, so "what would
+// following this wallet have done" is answered per leader rather than blended.
+// The paper executor fills against the live order book (docs/03 §9); these
+// tables hold only the result. Money columns are numeric, like every other
+// column an order can touch.
+
+export const paperBooks = pgTable("paper_books", {
+  subscriptionId: uuid("subscription_id")
+    .primaryKey()
+    .references(() => subscriptions.id, { onDelete: "cascade" }),
+  startingEquity: money("starting_equity").notNull(),
+  realizedPnl: money("realized_pnl").notNull().default("0"),
+  feesPaid: money("fees_paid").notNull().default("0"),
+  /** Marked-to-market equity, written by the engine each cycle for display. */
+  equity: money("equity"),
+  equityAt: ts("equity_at"),
+  createdAt: ts("created_at").notNull().defaultNow(),
+})
+
+export const paperPositions = pgTable(
+  "paper_positions",
+  {
+    subscriptionId: uuid("subscription_id")
+      .notNull()
+      .references(() => subscriptions.id, { onDelete: "cascade" }),
+    marketId: text("market_id").notNull(),
+    /** Human label (Polymarket market ids are long token ids). */
+    label: text("label"),
+    side: text("side").notNull(),
+    size: money("size").notNull(),
+    entryPrice: money("entry_price").notNull(),
+    updatedAt: ts("updated_at").notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("paper_positions_pk").on(t.subscriptionId, t.marketId)],
+)
+

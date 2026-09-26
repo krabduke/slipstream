@@ -22,6 +22,20 @@
       "when": 1790427568580,
       "tag": "0002_lock_down_postgrest",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790429333882,
+      "tag": "0003_lonely_outlaw_kid",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790429570133,
+      "tag": "0004_easy_silvermane",
+      "breakpoints": true
     }
   ]
 }

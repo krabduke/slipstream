@@ -61,3 +61,4 @@ export * from "./audit-log.js"
 
 export * from "./leaders.js"
 export * from "./intel.js"
+export * from "./auth.js"
