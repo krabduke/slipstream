@@ -18,7 +18,7 @@ How Slipstream gets built: ~20 delegated workers on Ox Alpha, in four waves, wit
 ```bash
 opencode run \
   -m opencode/x-preview-f-free \
-  --dir ~/Projects/k2capital/slipstream \
+  --dir ~/Projects/slipstream \
   --title "w7-polymarket-read" \
   --thinking \
   --format json \

@@ -130,6 +130,24 @@ describe("watchFills — the snapshot trap", () => {
     await iterator.return?.()
   })
 
+  it("keeps both sides when two watched leaders trade with each other", async () => {
+    // Dedupe is keyed by address as well as tid. If two watched addresses ever
+    // share a tid across the maker/taker sides of one trade, keying on tid alone
+    // would silently drop one leader's fill.
+    const fake = fakeSubscriptions()
+    const other = asAddress(`0x${"b2".repeat(20)}`)
+    const iterator = watchFills(fake.subscriptions, [ADDRESS, other])[Symbol.asyncIterator]()
+    const first = iterator.next()
+    await flush()
+
+    fake.emitFills({ ...fillEvent(4242), user: USER })
+    fake.emitFills({ ...fillEvent(4242), user: other as `0x${string}` })
+
+    expect((await first).value?.address).toBe(ADDRESS)
+    expect((await iterator.next()).value?.address).toBe(other)
+    await iterator.return?.()
+  })
+
   it("emits a repeated tid only once", async () => {
     const fake = fakeSubscriptions()
     const iterator = watchFills(fake.subscriptions, [ADDRESS])[Symbol.asyncIterator]()

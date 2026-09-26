@@ -41,7 +41,7 @@ export type HyperliquidSubscriptions = Pick<SubscriptionClient, "userFills" | "l
 export interface WatchOptions {
   /** Messages the consumer may fall behind by before the stream fails loudly. */
   readonly maxQueued?: number
-  /** How many recent `tid`s to remember when suppressing duplicate fills. */
+  /** How many recent fills to remember when suppressing duplicates. */
   readonly dedupeWindow?: number
 }
 
@@ -49,15 +49,15 @@ export const DEFAULT_MAX_QUEUED = 10_000
 export const DEFAULT_DEDUPE_WINDOW = 10_000
 
 /**
- * Remembers the last `limit` ids in insertion order and reports whether an id is
- * new. Bounded on purpose: an unbounded dedupe set on a long-lived stream is a
- * memory leak that only shows up in production.
+ * Remembers the last `limit` keys in insertion order and reports whether a key
+ * is new. Bounded on purpose: an unbounded dedupe set on a long-lived stream is
+ * a memory leak that only shows up in production.
  */
-const createIdFilter = (limit: number): ((id: number) => boolean) => {
-  const seen = new Set<number>()
-  return (id: number): boolean => {
-    if (seen.has(id)) return false
-    seen.add(id)
+const createIdFilter = (limit: number): ((key: string) => boolean) => {
+  const seen = new Set<string>()
+  return (key: string): boolean => {
+    if (seen.has(key)) return false
+    seen.add(key)
     if (seen.size > limit) {
       const oldest = seen.values().next()
       if (!oldest.done) seen.delete(oldest.value)
@@ -205,7 +205,10 @@ export const watchFills = (
               if (event.isSnapshot === true) return
               const owner = asAddress(event.user)
               for (const raw of event.fills) {
-                if (!isNew(raw.tid)) continue
+                // Keyed by address as well as `tid`: two watched leaders can be
+                // counterparties to each other, and a shared `tid` between the
+                // maker and taker side would otherwise drop one of their fills.
+                if (!isNew(`${owner}:${String(raw.tid)}`)) continue
                 push(toFill(raw, owner))
               }
             },
