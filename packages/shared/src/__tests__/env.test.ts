@@ -46,15 +46,15 @@ describe("parseEnv: reporting", () => {
     expect(error.variables).toEqual(
       expect.arrayContaining([
         "DATABASE_URL",
-        "REDIS_URL",
         "SESSION_SECRET",
         "KMS_PROVIDER",
         "PAPER_MODE",
       ]),
     )
-    expect(error.variables).toHaveLength(5)
+    // REDIS_URL is optional since v1 runs on Postgres alone (docs/BUILD.md).
+    expect(error.variables).toHaveLength(4)
     for (const name of error.variables) expect(error.message).toContain(name)
-    expect(error.message).toContain("5 problems")
+    expect(error.message).toContain("4 problems")
   })
 
   it("reports malformed and missing variables together", () => {
@@ -66,9 +66,8 @@ describe("parseEnv: reporting", () => {
       PAPER_MODE: "yes",
     })
 
-    expect(error.variables).toEqual(["DATABASE_URL", "REDIS_URL", "SESSION_SECRET", "PAPER_MODE"])
+    expect(error.variables).toEqual(["DATABASE_URL", "SESSION_SECRET", "PAPER_MODE"])
     expect(error.message).toContain("must be a postgres:// or postgresql:// URL")
-    expect(error.message).toContain("REDIS_URL: is required but was not set")
     expect(error.message).toContain("must be at least 32 characters")
     expect(error.message).toContain("PAPER_MODE: must be one of: true, false, 1, 0")
   })
@@ -107,10 +106,16 @@ describe("parseEnv: reporting", () => {
   })
 })
 
+describe("parseEnv: REDIS_URL", () => {
+  it("is optional, but validated when present", () => {
+    expect(() => parseEnv(without(valid, "REDIS_URL"))).not.toThrow()
+    expect(failure({ ...valid, REDIS_URL: "http://nope" }).variables).toEqual(["REDIS_URL"])
+  })
+})
+
 describe("parseEnv: no defaults for anything security-relevant", () => {
   it.each([
     ["DATABASE_URL"],
-    ["REDIS_URL"],
     ["SESSION_SECRET"],
     ["KMS_PROVIDER"],
     ["PAPER_MODE"],

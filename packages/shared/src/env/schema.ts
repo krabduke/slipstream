@@ -39,9 +39,13 @@ export const envSchema = z.object({
     .string(requiredMessage)
     .refine(isPostgresUrl, { message: "must be a postgres:// or postgresql:// URL" }),
 
+  /** Optional since 2026-09: a single engine instance runs on Postgres alone
+   *  (intents, kill switches and nonces are tables). Redis becomes necessary
+   *  only when more than one engine shares users (docs/01 §3 leases). */
   REDIS_URL: z
-    .string(requiredMessage)
-    .refine(isRedisUrl, { message: "must be a redis:// or rediss:// URL" }),
+    .string()
+    .refine(isRedisUrl, { message: "must be a redis:// or rediss:// URL" })
+    .optional(),
 
   // ---- Auth. ----
   /** Signs the short-lived session JWT (docs/04 §5). 32 characters is the

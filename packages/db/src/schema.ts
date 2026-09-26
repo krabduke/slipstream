@@ -17,6 +17,7 @@
  */
 import {
   boolean,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -335,3 +336,56 @@ export const siweNonces = pgTable("siwe_nonces", {
   expiresAt: ts("expires_at").notNull(),
   usedAt: ts("used_at"),
 })
+
+// ── Trader intelligence ──────────────────────────────────────────────────────
+//
+// Analytics about other people's public wallets, refreshed by the engine's
+// intel job and read by the Traders pages. These are statistics for humans,
+// never inputs to an order, so they are plain doubles: the money rule above
+// (numeric, never floats) covers every column that can reach an order, and
+// none of these can. The full profile (curves, positions, recent trades) is a
+// jsonb blob; the columns beside it exist only to sort and filter on.
+
+export const traderProfiles = pgTable(
+  "trader_profiles",
+  {
+    venue: text("venue").notNull(),
+    address: text("address").notNull(),
+    displayName: text("display_name"),
+    score: integer("score").notNull(),
+    copyable: boolean("copyable").notNull(),
+    flags: text("flags").array().notNull(),
+    accountValue: doublePrecision("account_value"),
+    pnlWeek: doublePrecision("pnl_week"),
+    pnlMonth: doublePrecision("pnl_month"),
+    pnlAll: doublePrecision("pnl_all"),
+    roiMonth: doublePrecision("roi_month"),
+    roiAll: doublePrecision("roi_all"),
+    maxDrawdown: doublePrecision("max_drawdown"),
+    winRate: doublePrecision("win_rate"),
+    tradeCount: integer("trade_count").notNull(),
+    profile: jsonb("profile").notNull(),
+    refreshedAt: ts("refreshed_at").notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("trader_profiles_pk").on(t.venue, t.address),
+    index("trader_profiles_venue_score_idx").on(t.venue, t.score),
+  ],
+)
+
+/** One row per intel refresh, so staleness is visible and alarmable. */
+export const intelRuns = pgTable(
+  "intel_runs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    venue: text("venue").notNull(),
+    startedAt: ts("started_at").notNull().defaultNow(),
+    finishedAt: ts("finished_at"),
+    candidates: integer("candidates"),
+    profiled: integer("profiled"),
+    failed: integer("failed"),
+    error: text("error"),
+  },
+  (t) => [index("intel_runs_venue_started_idx").on(t.venue, t.startedAt)],
+)
+

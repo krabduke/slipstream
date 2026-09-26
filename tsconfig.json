@@ -57,6 +57,12 @@
       "@slipstream/testkit": [
         "packages/testkit/src/index.ts"
       ],
+      "@slipstream/intel": [
+        "packages/intel/src/index.ts"
+      ],
+      "@slipstream/intel/*": [
+        "packages/intel/src/*"
+      ],
       "@slipstream/notify": [
         "packages/notify/src/index.ts"
       ],

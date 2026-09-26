@@ -8,6 +8,20 @@
       "when": 1788018869788,
       "tag": "0000_powerful_blue_shield",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790427552903,
+      "tag": "0001_faithful_james_howlett",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790427568580,
+      "tag": "0002_lock_down_postgrest",
+      "breakpoints": true
     }
   ]
 }

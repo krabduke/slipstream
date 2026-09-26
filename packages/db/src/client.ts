@@ -5,6 +5,7 @@ import { createRequire } from "node:module"
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core"
 
 import * as schema from "./schema.js"
+import { pgOptions } from "./tls.js"
 
 /**
  * A schema-aware Postgres handle.
@@ -38,7 +39,7 @@ const require_ = createRequire(import.meta.url)
  *
  * @param url a `postgres://` connection string
  */
-export const createDb = (url: string): Db => {
+export const createDb = (url: string, opts: { max?: number } = {}): Db => {
   const { drizzle } = require_("drizzle-orm/node-postgres") as NodePostgresModule
-  return drizzle(url, { schema })
+  return drizzle({ connection: { ...pgOptions(url), max: opts.max ?? 5 }, schema })
 }
