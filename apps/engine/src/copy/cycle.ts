@@ -64,9 +64,9 @@ function limitsFrom(venue: Venue, row: Awaited<ReturnType<typeof store.loadRiskP
     maxPositionPctEquity: money.parse(row.maxPositionPctEquity),
     maxTotalExposure: money.parse(row.maxTotalExposure),
     maxLeverage: money.parse(row.maxLeverage),
-    maxSlippageBps: row.maxSlippageBps,
-    maxSignalAgeMs: row.maxSignalAgeMs,
-    maxBookPct: money.parse(row.maxBookPct),
+    // Slippage, signal age and book share stay per-venue defaults: the row
+    // holds one value for all venues, and Polymarket's (300 bps, 120 s) must
+    // not be overwritten by Hyperliquid-sized numbers or vice versa.
     dailyLossLimit: money.parse(row.dailyLossLimit),
   }
 }

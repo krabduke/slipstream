@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
-import { findVenueAccountByOwner, getEncryptedKey } from "@slipstream/db/queries/index"
+import { findVenueAccountByOwner, getEncryptedKey, getRiskProfile } from "@slipstream/db/queries/index"
 import type { UserId, VenueAccountId } from "@slipstream/shared"
 import { ConnectHyperliquid } from "@/components/LiveKeyControls"
+import { LimitsForm } from "@/components/LimitsForm"
+import { fromRow } from "@/lib/limits"
 import { SignInPrompt } from "@/components/SignInPrompt"
 import { getDb } from "@/lib/db"
 import { ago, shortAddress } from "@/lib/format"
@@ -32,6 +34,14 @@ export default async function Settings() {
       <p>
         Signed in as <span className="num">{session.address}</span>.
       </p>
+
+      <h2 className="h2">Risk limits</h2>
+      <p>
+        These apply to every follow, paper and live, and to any manual order. Lowering a limit takes effect at once;
+        raising one asks your wallet to confirm. How far a copy may trail the leader&rsquo;s price is set per venue and not
+        editable here.
+      </p>
+      <LimitsForm current={fromRow(await getRiskProfile(uid, db, null))} />
 
       <h2 className="h2">Live trading on Hyperliquid</h2>
       {!live ? (

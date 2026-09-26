@@ -56,7 +56,7 @@ opening it to anyone else (docs/04 §7).
 - [x] E2E verified: paper copy on HL (fresh fill -> gates -> fill), PM cycle, signed-in web flow, key-refusal tests
 - [x] Monitoring: K2 freshness monitor checks the engine process; watchdog cron restarts it
 - [ ] Operator: set `LIVE_OWNER_ADDRESSES` in Vercel to the operator's wallet(s) to enable live trading
-- [ ] Risk-limit editor in Settings (defaults apply until then: $1,000 / 20% per position, 50% exposure, 3x, daily loss 10%)
+- [x] Risk-limit editor in Settings (account-wide; tightening instant, loosening needs a fresh wallet signature; slippage/signal age/book share stay per-venue defaults)
 - [ ] (Deferred by owner) live Polymarket trading
 
 ## Operations
