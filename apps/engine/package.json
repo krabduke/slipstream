@@ -1,0 +1,10 @@
+{
+  "name": "@slipstream/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx --tsconfig ../../tsconfig.json src/main.ts",
+    "build": "node build.mjs"
+  }
+}

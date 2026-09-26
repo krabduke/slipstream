@@ -7,15 +7,21 @@
  * This score asks a narrower question: how much evidence is there that this
  * wallet is repeatably good at what it does, at a risk you could stomach?
  *
- *   score = 100 x (0.35 profitability + 0.30 consistency + 0.25 risk + 0.10 sample)
+ *   score = 100 x (0.40 profitability + 0.33 consistency + 0.27 risk)
+ *                x evidence (0.6 .. 1.0, from the number of closed trades)
  *                x concentration penalty
+ *
+ * Evidence multiplies rather than adds: seven lucky trades should cap a
+ * score, not merely nudge it. Tuned on a 40-account Hyperliquid sample
+ * (2026-09-26) where an additive sample term let a 7-trade inactive wallet top
+ * the list.
  *
  * Every part is shown on the profile page. It is a statistic, not advice:
  * nothing here predicts what the wallet does next (docs/04 §7).
  */
 import type { CopyFlag, ScoreParts } from "./types.js"
 
-export const WEIGHTS = { profitability: 0.35, consistency: 0.3, risk: 0.25, sample: 0.1 } as const
+export const WEIGHTS = { profitability: 0.4, consistency: 0.33, risk: 0.27 } as const
 
 const clamp01 = (x: number) => (Number.isFinite(x) ? Math.min(1, Math.max(0, x)) : 0)
 
@@ -54,8 +60,10 @@ export function scoreParts(i: ScoreInput): ScoreParts {
   const trust = clamp01(weeks / 8)
   const consistency = clamp01(trust * raw + (1 - trust) * 0.5 * raw)
 
-  // 0% drawdown -> 1, 50%+ -> 0. Unknown drawdown is treated as bad, not good.
-  const risk = i.maxDrawdownPct === null ? 0.3 : clamp01(1 - i.maxDrawdownPct / 0.5)
+  // Linear from 0% drawdown (1) to 90% (0). The median high-return
+  // Hyperliquid candidate sits near 70%, so a 50% cutoff zeroed almost
+  // everyone and stopped discriminating. Unknown drawdown counts as bad.
+  const risk = i.maxDrawdownPct === null ? 0.3 : clamp01(1 - i.maxDrawdownPct / 0.9)
 
   const sample = clamp01(i.tradeCount / 60)
 
@@ -67,11 +75,9 @@ export function scoreParts(i: ScoreInput): ScoreParts {
 
 export function scoreFrom(p: ScoreParts): number {
   const base =
-    WEIGHTS.profitability * p.profitability +
-    WEIGHTS.consistency * p.consistency +
-    WEIGHTS.risk * p.risk +
-    WEIGHTS.sample * p.sample
-  return Math.round(100 * base * p.concentrationPenalty)
+    WEIGHTS.profitability * p.profitability + WEIGHTS.consistency * p.consistency + WEIGHTS.risk * p.risk
+  const evidence = 0.6 + 0.4 * p.sample
+  return Math.round(100 * base * evidence * p.concentrationPenalty)
 }
 
 /** Flags that make a wallet impractical to copy. Any of these -> not copyable. */

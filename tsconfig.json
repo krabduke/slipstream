@@ -68,6 +68,30 @@
       ],
       "@/*": [
         "apps/web/src/*"
+      ],
+      "@slipstream/db/*": [
+        "packages/db/src/*"
+      ],
+      "@slipstream/vault/*": [
+        "packages/vault/src/*"
+      ],
+      "@slipstream/risk/*": [
+        "packages/risk/src/*"
+      ],
+      "@slipstream/copy/*": [
+        "packages/copy/src/*"
+      ],
+      "@slipstream/exec/*": [
+        "packages/exec/src/*"
+      ],
+      "@slipstream/tracker/*": [
+        "packages/tracker/src/*"
+      ],
+      "@slipstream/testkit/*": [
+        "packages/testkit/src/*"
+      ],
+      "@slipstream/notify/*": [
+        "packages/notify/src/*"
       ]
     },
     "jsx": "preserve"

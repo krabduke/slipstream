@@ -60,3 +60,4 @@ export * from "./decisions.js"
 export * from "./audit-log.js"
 
 export * from "./leaders.js"
+export * from "./intel.js"

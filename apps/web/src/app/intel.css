@@ -1,0 +1,162 @@
+/* Trader intelligence pages. Uses only tokens from globals.css; defines no
+   colour. The three signal hues keep their single meanings: green/red for the
+   sign of a number, amber for "held" — here, a reason a wallet can't be copied. */
+
+/* ── Navigation ─────────────────────────────────────────────────────────── */
+.nav {
+  display: flex;
+  gap: var(--gap-4);
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: var(--gap-3) var(--gap-4) 0;
+  font-size: var(--step-0);
+}
+.nav a { color: var(--text-lo); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+.nav a:hover { color: var(--text-hi); border-bottom-color: var(--line-strong); }
+
+/* ── Page heads ─────────────────────────────────────────────────────────── */
+.page-head { margin-top: var(--gap-2); }
+.page-head .section-note { margin-top: var(--gap-2); }
+.display {
+  margin: 0;
+  max-width: 22ch;
+  font-size: clamp(2rem, 4.6vw, var(--step-4));
+  font-weight: 600;
+  font-variation-settings: "wdth" 100;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+.home-head .section-note { margin-top: var(--gap-4); font-size: var(--step-1); max-width: 40rem; }
+.h2 { margin: 0 0 var(--gap-2); font-size: var(--step-2); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+.section-head .h2 { margin: 0; }
+.section-head a { color: var(--text-lo); font-size: var(--step-0); }
+.fresh { margin: var(--gap-2) 0 0; font-size: var(--step--1); color: var(--text-dim); }
+.crumb { margin: 0 0 var(--gap-2); font-size: var(--step-0); }
+.crumb a { color: var(--text-lo); }
+.empty { color: var(--text-lo); margin: var(--gap-3) 0; }
+
+/* ── Filters ────────────────────────────────────────────────────────────── */
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-3); margin: var(--gap-4) 0 var(--gap-3); }
+.seg-group { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.seg-btn {
+  padding: 0.35rem 0.7rem;
+  font-size: var(--step--1);
+  color: var(--text-lo);
+  text-decoration: none;
+  border-right: 1px solid var(--line);
+  background: var(--surface-1);
+}
+.seg-btn:last-child { border-right: 0; }
+.seg-btn:hover { color: var(--text-hi); }
+.seg-btn[aria-current="true"] { color: var(--text-hi); background: var(--surface-2); font-weight: 600; }
+.toggle { font-size: var(--step--1); color: var(--text-lo); }
+
+/* ── Score strip: the one bold element ──────────────────────────────────────
+   Segments step down in LUMINANCE (never hue), in order of weight. The track
+   is always the full 100, so whatever evidence and concentration scaled away
+   is visible as empty track. */
+.strip { display: inline-flex; align-items: center; gap: var(--gap-2); }
+.strip-score { font-weight: 600; min-width: 2ch; text-align: right; }
+.strip-bar {
+  display: inline-flex;
+  width: 7.5rem;
+  height: 8px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--surface-sunk);
+}
+.seg { display: block; height: 100%; }
+.seg-a { background: var(--text-hi); }
+.seg-b { background: var(--text-lo); }
+.seg-c { background: var(--text-dim); }
+.strip-hero { flex-direction: column; align-items: flex-end; gap: var(--gap-2); }
+.strip-hero .strip-score { font-size: var(--step-4); line-height: 0.9; letter-spacing: -0.03em; }
+.strip-hero .strip-bar { width: 14rem; height: 12px; }
+
+/* ── Tables ─────────────────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); }
+.traders, .plain { width: 100%; border-collapse: collapse; font-size: var(--step-0); }
+.traders th, .plain th {
+  position: sticky; top: 0;
+  text-align: left;
+  font-weight: 500;
+  font-size: var(--step--1);
+  color: var(--text-dim);
+  padding: 0.55rem var(--gap-3);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-1);
+  white-space: nowrap;
+}
+.traders td, .plain td { padding: 0.55rem var(--gap-3); border-bottom: 1px solid var(--line); vertical-align: middle; }
+.traders tr:last-child td, .plain tr:last-child td { border-bottom: 0; }
+.traders tbody tr:hover, .plain tbody tr:hover { background: var(--surface-0); }
+.r { text-align: right; white-space: nowrap; }
+.dim { color: var(--text-dim); }
+.who { min-width: 11rem; }
+.who-link { display: flex; flex-direction: column; text-decoration: none; }
+.who-name { font-weight: 600; color: var(--text-hi); }
+.who-addr { font-size: var(--step--1); color: var(--text-lo); }
+.who-link:hover .who-name, .who-link:hover .who-addr:only-child { text-decoration: underline; }
+.venue-tag { display: inline-block; margin-top: 2px; font-size: 0.6875rem; color: var(--text-dim); }
+.notes { min-width: 9rem; }
+.note-none { color: var(--text-dim); }
+.flag {
+  display: inline-block;
+  margin: 1px 4px 1px 0;
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-lo);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  white-space: nowrap;
+}
+.flag-block { color: var(--held); border-color: var(--held); background: var(--held-wash); }
+.traders tr[data-copyable="false"] .who-name,
+.traders tr[data-copyable="false"] .who-addr { color: var(--text-lo); }
+.table-foot { margin: var(--gap-2) 0 0; font-size: var(--step--1); color: var(--text-dim); }
+
+/* ── Profile ────────────────────────────────────────────────────────────── */
+.profile-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--gap-4); flex-wrap: wrap; }
+.profile-id { margin: var(--gap-1) 0 0; font-size: var(--step--1); color: var(--text-lo); word-break: break-all; }
+.profile-id a { margin-left: var(--gap-2); font-family: var(--font-ui); }
+.verdict {
+  margin-top: var(--gap-4);
+  padding: var(--gap-3) var(--gap-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+}
+.verdict p { margin: 0; font-weight: 500; }
+.verdict-held { background: var(--held-wash); box-shadow: inset 3px 0 0 var(--held); border-color: transparent; }
+.flag-list { list-style: none; margin: var(--gap-2) 0 0; padding: 0; display: grid; gap: var(--gap-2); color: var(--text-lo); }
+.reasons { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--gap-1); color: var(--text-lo); max-width: 44rem; line-height: 1.5; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1px; margin: 0; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.stat-grid > div { background: var(--surface-1); padding: var(--gap-3); }
+.stat-grid dt { font-size: var(--step--1); color: var(--text-dim); }
+.stat-grid dd { margin: 2px 0 0; font-size: var(--step-2); font-weight: 500; }
+
+.curve { margin: 0; padding: var(--gap-3); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); }
+.curve svg { display: block; width: 100%; height: 180px; }
+.curve-zero { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 4; }
+.curve-line { fill: none; stroke: currentColor; stroke-width: 1.75; }
+.curve-axis { display: flex; justify-content: space-between; margin-top: var(--gap-1); font-size: var(--step--1); color: var(--text-dim); }
+
+/* ── Home + method ─────────────────────────────────────────────────────── */
+.pitch { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--gap-5); border-top: 1px solid var(--line); padding-top: var(--gap-5); }
+.pitch p { margin: 0; color: var(--text-lo); line-height: 1.55; max-width: 34rem; }
+.prose { max-width: 44rem; }
+.prose p { color: var(--text-lo); line-height: 1.6; }
+.prose .h2 { margin-top: var(--gap-5); }
+.formula { padding: var(--gap-3); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius); font-size: var(--step-0); color: var(--text-hi); }
+.defs { margin: 0; display: grid; gap: var(--gap-3); }
+.defs dt { font-weight: 600; }
+.defs dd { margin: 2px 0 0; color: var(--text-lo); line-height: 1.55; }
+
+@media (max-width: 46rem) {
+  .strip-bar { width: 4.5rem; }
+  .profile-head { align-items: flex-start; }
+  .strip-hero { align-items: flex-start; }
+  .nav { gap: var(--gap-3); overflow-x: auto; }
+}
