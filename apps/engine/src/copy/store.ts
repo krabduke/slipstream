@@ -231,3 +231,13 @@ export async function heartbeat(db: Db, holder: string, status: Record<string, u
     })
 }
 
+
+/** A follow whose "stop" (subscription kill with flatten) has finished
+ *  flattening: mark it stopped and clear its switch. */
+export async function markStopped(db: Db, subscriptionId: string) {
+  await db.update(subscriptions).set({ status: "stopped" }).where(eq(subscriptions.id, subscriptionId))
+  await db
+    .update(killSwitches)
+    .set({ active: false, flatten: false, setAt: new Date() })
+    .where(and(eq(killSwitches.scope, "subscription"), eq(killSwitches.scopeId, subscriptionId)))
+}

@@ -9,9 +9,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@nktkas/hyperliquid": "^0.33.3",
     "@slipstream/db": "workspace:*",
     "@slipstream/intel": "workspace:*",
     "@slipstream/shared": "workspace:*",
+    "@slipstream/vault": "workspace:*",
+    "@slipstream/venues": "workspace:*",
     "drizzle-orm": "0.38.4",
     "jose": "^5.9.6",
     "next": "^15.1.3",

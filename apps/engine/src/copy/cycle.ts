@@ -198,7 +198,13 @@ export class CopyEngine {
     const leaderFills =
       venue === "hyperliquid" ? (hlLastFill.get(f.leaderAddress) ?? new Map<MarketId, LeaderRef>()) : await this.pmFills(f.leaderAddress)
 
-    // Panic with flatten: close everything, plan nothing.
+    // Flatten (panic, or stopping this follow): close everything, plan nothing.
+    // A follow being stopped is marked stopped once nothing is left open.
+    const stopping = subKills.some((k) => k.scope === "subscription" && k.flatten)
+    if (flatten && stopping && followerPositions.length === 0) {
+      await store.markStopped(this.db, f.subscriptionId)
+      return
+    }
     if (flatten) {
       for (const p of followerPositions) {
         await this.executeExit(venue, f, {

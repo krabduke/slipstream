@@ -13,7 +13,7 @@ importers:
         version: 0.33.3(typescript@5.9.3)
       '@polymarket/clob-client-v2':
         specifier: ^1.1.0
-        version: 1.1.0(typescript@5.9.3)
+        version: 1.1.0(typescript@5.9.3)(zod@3.25.76)
       pg:
         specifier: ^8.23.0
         version: 8.23.0
@@ -54,6 +54,9 @@ importers:
       typescript-eslint:
         specifier: ^8.18.1
         version: 8.68.0(eslint@9.39.5)(typescript@5.9.3)
+      viem:
+        specifier: ^2.55.19
+        version: 2.55.19(typescript@5.9.3)(zod@3.25.76)
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.3)(vite@5.4.21(@types/node@22.20.1))
@@ -65,6 +68,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@nktkas/hyperliquid':
+        specifier: ^0.33.3
+        version: 0.33.3(typescript@5.9.3)
       '@slipstream/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -74,6 +80,12 @@ importers:
       '@slipstream/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@slipstream/vault':
+        specifier: workspace:*
+        version: link:../../packages/vault
+      '@slipstream/venues':
+        specifier: workspace:*
+        version: link:../../packages/venues
       drizzle-orm:
         specifier: 0.38.4
         version: 0.38.4(@types/pg@8.23.1)(@types/react@19.2.18)(pg@8.23.0)(react@19.2.8)
@@ -3170,7 +3182,7 @@ snapshots:
 
   '@petamoriken/float16@3.9.3': {}
 
-  '@polymarket/clob-client-v2@1.1.0(typescript@5.9.3)':
+  '@polymarket/clob-client-v2@1.1.0(typescript@5.9.3)(zod@3.25.76)':
     dependencies:
       '@ethersproject/providers': 5.8.0
       '@ethersproject/wallet': 5.8.0

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
 import type { CopyFlag, TraderProfile } from "@slipstream/intel/types"
+import { FollowPanel } from "@/components/FollowPanel"
 import { PnlCurve } from "@/components/PnlCurve"
 import { ScoreStrip } from "@/components/ScoreStrip"
 import { FLAG_TEXT } from "@/lib/flags"
@@ -87,6 +88,8 @@ export default async function TraderPage({ params }: { params: Promise<Params> }
           </ul>
         ) : null}
       </section>
+
+      <FollowPanel venue={venue} address={p.address} copyable={p.copyable} />
 
       <section className="section">
         <h2 className="h2">Why this score</h2>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Archivo, IBM_Plex_Mono } from "next/font/google"
-import { AnnunciatorBand } from "@/components/AnnunciatorBand"
+import { LiveBand } from "@/components/LiveBand"
 import { Nav } from "@/components/Nav"
 import "./globals.css"
 import "./ui.css"
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${archivo.variable} ${plexMono.variable}`}>
       <body>
-        <AnnunciatorBand />
+        <LiveBand />
         <Nav />
         <main className="shell">{children}</main>
       </body>

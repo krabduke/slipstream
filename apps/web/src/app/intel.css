@@ -11,6 +11,8 @@
   padding: var(--gap-3) var(--gap-4) 0;
   font-size: var(--step-0);
 }
+.nav { justify-content: space-between; align-items: center; }
+.nav-links { display: flex; gap: var(--gap-4); }
 .nav a { color: var(--text-lo); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
 .nav a:hover { color: var(--text-hi); border-bottom-color: var(--line-strong); }
 
@@ -132,8 +134,10 @@
 .verdict-held { background: var(--held-wash); box-shadow: inset 3px 0 0 var(--held); border-color: transparent; }
 .flag-list { list-style: none; margin: var(--gap-2) 0 0; padding: 0; display: grid; gap: var(--gap-2); color: var(--text-lo); }
 .reasons { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--gap-1); color: var(--text-lo); max-width: 44rem; line-height: 1.5; }
-.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1px; margin: 0; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.stat-grid > div { background: var(--surface-1); padding: var(--gap-3); }
+/* Cells draw their own right and bottom rules, so a short last row leaves
+   plain surface rather than a block of divider colour. */
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); margin: 0; background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.stat-grid > div { padding: var(--gap-3); box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line); }
 .stat-grid dt { font-size: var(--step--1); color: var(--text-dim); }
 .stat-grid dd { margin: 2px 0 0; font-size: var(--step-2); font-weight: 500; }
 
@@ -160,3 +164,65 @@
   .strip-hero { align-items: flex-start; }
   .nav { gap: var(--gap-3); overflow-x: auto; }
 }
+
+/* ── Wallet + buttons ──────────────────────────────────────────────────── */
+.wallet { display: inline-flex; align-items: center; gap: var(--gap-2); font-size: var(--step--1); }
+.wallet-pending { min-width: 8rem; min-height: 1.6rem; }
+.wallet-addr { color: var(--text-lo); }
+.wallet-error { color: var(--short); max-width: 22rem; }
+.btn {
+  font: inherit;
+  font-size: var(--step-0);
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--text-hi);
+  background: var(--text-hi);
+  color: var(--surface-1);
+  cursor: pointer;
+}
+.btn:hover { opacity: 0.9; }
+.btn:disabled { opacity: 0.5; cursor: progress; }
+.btn-quiet { background: transparent; color: var(--text-hi); border-color: var(--line-strong); font-size: var(--step--1); padding: 0.3rem 0.7rem; }
+.btn-danger { background: transparent; color: var(--short); border-color: var(--short); }
+.linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--text-lo); text-decoration: underline; cursor: pointer; }
+@media (max-width: 46rem) {
+  .nav { flex-wrap: wrap; gap: var(--gap-2); }
+  .nav-links { gap: var(--gap-3); overflow-x: auto; }
+}
+
+/* ── Follow panel ──────────────────────────────────────────────────────── */
+.follow { margin-top: var(--gap-4); padding: var(--gap-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); max-width: 40rem; }
+.follow-title { margin: 0; font-weight: 600; font-size: var(--step-1); }
+.follow-note { margin: var(--gap-1) 0 var(--gap-3); color: var(--text-lo); line-height: 1.5; }
+.follow-form { display: grid; gap: var(--gap-3); }
+.follow-modes { border: 0; padding: 0; margin: 0; display: grid; gap: var(--gap-2); }
+.follow-modes legend { font-size: var(--step--1); color: var(--text-dim); margin-bottom: var(--gap-1); }
+.follow-mode { display: flex; gap: var(--gap-2); align-items: center; cursor: pointer; }
+.follow-field { display: flex; justify-content: space-between; align-items: center; gap: var(--gap-3); }
+.follow-field > span:first-child { color: var(--text-lo); }
+.follow-input { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 0 0.5rem; background: var(--surface-0); }
+.follow-input input { width: 7rem; border: 0; background: transparent; font: inherit; font-family: var(--font-num); color: var(--text-hi); padding: 0.35rem 0; text-align: right; }
+.follow-input input:focus { outline: none; }
+.follow-input:focus-within { outline: 2px solid var(--focus); outline-offset: 1px; }
+.unit { color: var(--text-dim); font-family: var(--font-num); }
+.follow-help { margin: calc(-1 * var(--gap-2)) 0 0; font-size: var(--step--1); color: var(--text-dim); line-height: 1.45; }
+.follow-error { color: var(--short); margin: var(--gap-2) 0 0; }
+.follow .btn { justify-self: start; }
+
+/* ── Following ─────────────────────────────────────────────────────────── */
+.small { font-size: var(--step--1); margin: 2px 0 0; }
+.controls { display: inline-flex; gap: var(--gap-2); align-items: center; flex-wrap: wrap; }
+.follow-list { display: grid; gap: var(--gap-4); }
+.follow-card { display: grid; gap: var(--gap-3); padding: var(--gap-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); }
+.follow-card[data-paused="true"] { box-shadow: inset 3px 0 0 var(--held); background: var(--held-wash); }
+.follow-card-head { display: flex; justify-content: space-between; gap: var(--gap-3); align-items: flex-start; flex-wrap: wrap; }
+.follow-card .who-name { text-decoration: none; font-size: var(--step-1); }
+.panic { display: flex; justify-content: space-between; align-items: center; gap: var(--gap-3); flex-wrap: wrap; padding: var(--gap-3) var(--gap-4); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); }
+.panic-on { border-color: var(--short); box-shadow: inset 3px 0 0 var(--short); }
+.panic-title { margin: 0; font-weight: 600; }
+.panic-note { margin: 2px 0 0; color: var(--text-lo); font-size: var(--step--1); }
+.empty-card { padding: var(--gap-4); border: 1px dashed var(--line-strong); border-radius: var(--radius); display: grid; gap: var(--gap-3); justify-items: start; }
+.empty-card p { margin: 0; color: var(--text-lo); }
+.row[data-verdict="rejected"] { background: var(--held-wash); }
+.verdict-live { box-shadow: inset 3px 0 0 var(--text-hi); margin: 0; }
