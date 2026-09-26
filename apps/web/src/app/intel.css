@@ -13,7 +13,7 @@
 }
 .nav { justify-content: space-between; align-items: center; }
 .nav-links { display: flex; gap: var(--gap-4); }
-.nav a { color: var(--text-lo); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+.nav a { white-space: nowrap; color: var(--text-lo); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
 .nav a:hover { color: var(--text-hi); border-bottom-color: var(--line-strong); }
 
 /* ── Page heads ─────────────────────────────────────────────────────────── */
@@ -117,7 +117,7 @@
 .flag-block { color: var(--held); border-color: var(--held); background: var(--held-wash); }
 .traders tr[data-copyable="false"] .who-name,
 .traders tr[data-copyable="false"] .who-addr { color: var(--text-lo); }
-.table-foot { margin: var(--gap-2) 0 0; font-size: var(--step--1); color: var(--text-dim); }
+.table-foot { margin: 0; padding: var(--gap-2) var(--gap-3); border-top: 1px solid var(--line); font-size: var(--step--1); color: var(--text-dim); }
 
 /* ── Profile ────────────────────────────────────────────────────────────── */
 .profile-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--gap-4); flex-wrap: wrap; }
@@ -188,7 +188,8 @@
 .linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--text-lo); text-decoration: underline; cursor: pointer; }
 @media (max-width: 46rem) {
   .nav { flex-wrap: wrap; gap: var(--gap-2); }
-  .nav-links { gap: var(--gap-3); overflow-x: auto; }
+  .nav-links { order: 2; flex-basis: 100%; gap: var(--gap-3); overflow-x: auto; scrollbar-width: none; padding-bottom: var(--gap-1); }
+  .nav-links::-webkit-scrollbar { display: none; }
 }
 
 /* ── Follow panel ──────────────────────────────────────────────────────── */
