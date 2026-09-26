@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ArrowRight } from "@/components/Mark"
 import { TraderTable } from "@/components/TraderTable"
 import { getTraderList } from "@/lib/traders"
 
@@ -12,12 +13,22 @@ export default async function Home() {
   return (
     <>
       <header className="page-head home-head">
-        <h1 className="display">Find traders worth following on Hyperliquid and Polymarket.</h1>
+        <p className="eyebrow">Trader intelligence for Hyperliquid and Polymarket</p>
+        <h1 className="display">Find traders worth following.</h1>
         <p className="section-note">
           Slipstream profiles the strongest wallets on both venues every six hours and scores them on evidence of repeatable
           skill at a risk you could live with. Size and one lucky bet don&rsquo;t move the score; consistency, drawdown and
           sample size do. Wallets that can&rsquo;t be copied, like scalpers and market makers, are marked and explained.
         </p>
+        <div className="cta-row">
+          <Link href="/traders" className="cta">
+            <span className="cta-cap">Browse traders</span>
+            <span className="cta-tile"><ArrowRight /></span>
+          </Link>
+          <Link href="/method" className="cta cta-ghost">
+            <span className="cta-cap">How scores work</span>
+          </Link>
+        </div>
       </header>
 
       <section className="section">

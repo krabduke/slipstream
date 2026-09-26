@@ -69,7 +69,7 @@ export function AnnunciatorBand({ state = DISCONNECTED }: { state?: BandState })
 
   return (
     <div className="band" data-mode={state.mode} role="status" aria-label="System status">
-      <div className="band-mark">Slipstream</div>
+      <div className="band-mark">{state.mode === "live" ? "Live" : "Paper"}</div>
 
       <div className="cell">
         <span className="cell-k">Engine</span>

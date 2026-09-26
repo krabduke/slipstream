@@ -3,35 +3,56 @@
    sign of a number, amber for "held" — here, a reason a wallet can't be copied. */
 
 /* ── Navigation ─────────────────────────────────────────────────────────── */
+/* The K2 header: lockup left, tracked mono links, the sign-in pill right. */
+.topbar { background: var(--surface-0); }
 .nav {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: var(--gap-4);
-  max-width: 78rem;
+  max-width: 90rem;
   margin: 0 auto;
-  padding: var(--gap-3) var(--gap-4) 0;
-  font-size: var(--step-0);
+  min-height: 3.5rem;
+  padding: 0 clamp(16px, 2.4vw, 40px);
 }
-.nav { justify-content: space-between; align-items: center; }
-.nav-links { display: flex; gap: var(--gap-4); }
-.nav a { white-space: nowrap; color: var(--text-lo); text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; }
-.nav a:hover { color: var(--text-hi); border-bottom-color: var(--line-strong); }
+.lockup { display: inline-flex; align-items: center; gap: 12px; color: var(--text-hi); text-decoration: none; }
+.lockup-text { display: flex; flex-direction: column; gap: 3px; line-height: 1; }
+.lockup-name { font-weight: 600; font-size: 15px; letter-spacing: 0.02em; }
+.lockup-sub { font-family: var(--font-narrow); font-weight: 500; font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
+.nav-links { display: flex; gap: clamp(1rem, 2vw, 1.75rem); }
+.nav-links a {
+  white-space: nowrap;
+  font-family: var(--font-num);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-lo);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+.nav-links a:hover { color: var(--text-hi); }
+.nav-links a[aria-current="page"] { color: var(--text-hi); border-bottom-color: var(--text-hi); }
 
 /* ── Page heads ─────────────────────────────────────────────────────────── */
 .page-head { margin-top: var(--gap-2); }
 .page-head .section-note { margin-top: var(--gap-2); }
+.page-head .eyebrow { margin-bottom: var(--gap-4); }
 .display {
   margin: 0;
-  max-width: 22ch;
-  font-size: clamp(2rem, 4.6vw, var(--step-4));
-  font-weight: 600;
-  font-variation-settings: "wdth" 100;
-  letter-spacing: -0.025em;
-  line-height: 1.02;
+  max-width: 20ch;
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  text-wrap: balance;
 }
-.home-head .section-note { margin-top: var(--gap-4); font-size: var(--step-1); max-width: 40rem; }
-.h2 { margin: 0 0 var(--gap-2); font-size: var(--step-2); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+.home-head .display { font-size: clamp(2.5rem, 5.9vw, 5.25rem); max-width: 17ch; }
+.home-head .section-note { margin-top: var(--gap-4); font-size: 15px; line-height: 1.58; max-width: 38rem; }
+.h2 { margin: 0 0 var(--gap-2); font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; }
 .section-head .h2 { margin: 0; }
-.section-head a { color: var(--text-lo); font-size: var(--step-0); }
+.section-head a { color: var(--text-lo); font-size: var(--step-0); text-underline-offset: 4px; text-decoration-color: var(--line-strong); }
+.section-head a:hover { color: var(--text-hi); text-decoration-color: var(--blue); }
 .fresh { margin: var(--gap-2) 0 0; font-size: var(--step--1); color: var(--text-dim); }
 .crumb { margin: 0 0 var(--gap-2); font-size: var(--step-0); }
 .crumb a { color: var(--text-lo); }
@@ -40,17 +61,23 @@
 /* ── Filters ────────────────────────────────────────────────────────────── */
 .filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-3); margin: var(--gap-4) 0 var(--gap-3); }
 .seg-group { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.seg-group { gap: 4px; border: 0; overflow: visible; }
 .seg-btn {
-  padding: 0.35rem 0.7rem;
-  font-size: var(--step--1);
+  padding: 0.5rem 0.85rem;
+  font-family: var(--font-narrow);
+  font-weight: 500;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
   color: var(--text-lo);
   text-decoration: none;
   border-right: 1px solid var(--line);
   background: var(--surface-1);
 }
-.seg-btn:last-child { border-right: 0; }
+.seg-btn:last-child { border-right: 1px solid var(--line); }
 .seg-btn:hover { color: var(--text-hi); }
-.seg-btn[aria-current="true"] { color: var(--text-hi); background: var(--surface-2); font-weight: 600; }
+.seg-btn[aria-current="true"] { color: var(--text-hi); border-color: var(--text-hi); background: transparent; }
 .toggle { font-size: var(--step--1); color: var(--text-lo); }
 
 /* ── Score strip: the one bold element ──────────────────────────────────────
@@ -77,22 +104,25 @@
 .strip-hero .strip-bar { width: 14rem; height: 12px; }
 
 /* ── Tables ─────────────────────────────────────────────────────────────── */
-.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-left: 2px solid var(--line-strong); background: var(--surface-1); }
 .traders, .plain { width: 100%; border-collapse: collapse; font-size: var(--step-0); }
 .traders th, .plain th {
   position: sticky; top: 0;
   text-align: left;
+  font-family: var(--font-narrow);
   font-weight: 500;
-  font-size: var(--step--1);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--text-dim);
-  padding: 0.55rem var(--gap-3);
+  padding: 0.7rem var(--gap-3);
   border-bottom: 1px solid var(--line);
   background: var(--surface-1);
   white-space: nowrap;
 }
-.traders td, .plain td { padding: 0.55rem var(--gap-3); border-bottom: 1px solid var(--line); vertical-align: middle; }
+.traders td, .plain td { padding: 0.65rem var(--gap-3); border-bottom: 1px solid var(--line); vertical-align: middle; }
 .traders tr:last-child td, .plain tr:last-child td { border-bottom: 0; }
-.traders tbody tr:hover, .plain tbody tr:hover { background: var(--surface-0); }
+.traders tbody tr:hover, .plain tbody tr:hover { background: var(--surface-2); }
 .r { text-align: right; white-space: nowrap; }
 .dim { color: var(--text-dim); }
 .who { min-width: 11rem; }
@@ -138,17 +168,18 @@
    plain surface rather than a block of divider colour. */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); margin: 0; background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .stat-grid > div { padding: var(--gap-3); box-shadow: 1px 0 0 var(--line), 0 1px 0 var(--line); }
-.stat-grid dt { font-size: var(--step--1); color: var(--text-dim); }
-.stat-grid dd { margin: 2px 0 0; font-size: var(--step-2); font-weight: 500; }
+.stat-grid dt { font-family: var(--font-narrow); font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); }
+.stat-grid dd { margin: 4px 0 0; font-size: var(--step-2); font-weight: 400; }
 
 .curve { margin: 0; padding: var(--gap-3); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-1); }
 .curve svg { display: block; width: 100%; height: 180px; }
 .curve-zero { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 4; }
-.curve-line { fill: none; stroke: currentColor; stroke-width: 1.75; }
+.curve-line { fill: none; stroke: currentColor; stroke-width: 1.5; }
 .curve-axis { display: flex; justify-content: space-between; margin-top: var(--gap-1); font-size: var(--step--1); color: var(--text-dim); }
 
 /* ── Home + method ─────────────────────────────────────────────────────── */
 .pitch { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: var(--gap-5); border-top: 1px solid var(--line); padding-top: var(--gap-5); }
+.pitch .h2 { font-size: 1.25rem; letter-spacing: -0.012em; }
 .pitch p { margin: 0; color: var(--text-lo); line-height: 1.55; max-width: 34rem; }
 .prose { max-width: 44rem; }
 .prose p { color: var(--text-lo); line-height: 1.6; }
@@ -172,23 +203,56 @@
 .wallet-error { color: var(--short); max-width: 22rem; }
 .btn {
   font: inherit;
-  font-size: var(--step-0);
-  font-weight: 600;
-  padding: 0.45rem 0.9rem;
-  border-radius: var(--radius);
+  font-family: var(--font-narrow);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 1.1rem;
+  min-height: 2.5rem;
+  border-radius: 0;
   border: 1px solid var(--text-hi);
   background: var(--text-hi);
-  color: var(--surface-1);
+  color: var(--surface-0);
   cursor: pointer;
 }
-.btn:hover { opacity: 0.9; }
+.btn:hover { background: #fff; }
 .btn:disabled { opacity: 0.5; cursor: progress; }
-.btn-quiet { background: transparent; color: var(--text-hi); border-color: var(--line-strong); font-size: var(--step--1); padding: 0.3rem 0.7rem; }
+.btn-quiet { background: rgba(140, 170, 220, 0.14); color: var(--text-hi); border-color: transparent; font-size: 12px; min-height: 2.1rem; padding: 0 0.9rem; }
+.btn-quiet:hover { background: rgba(140, 170, 220, 0.26); }
+/* The sign-in pill, as in K2's header. */
+.nav .btn-quiet { border-radius: 999px; background: var(--text-hi); color: var(--surface-0); font-family: var(--font-num); font-size: 11px; letter-spacing: 0.18em; padding: 0 1.1rem; }
+.nav .btn-quiet:hover { background: #fff; }
 .btn-danger { background: transparent; color: var(--short); border-color: var(--short); }
+.btn-danger:hover { background: var(--short-wash); }
+
+/* K2's one button: a solid cap with the arrow in its own blue tile. */
+.cta-row { display: flex; flex-wrap: wrap; gap: 0; margin-top: var(--gap-5); }
+.cta { display: inline-flex; align-items: stretch; text-decoration: none; }
+.cta-cap {
+  display: flex; align-items: center; height: 44px; padding: 0 18px;
+  font-family: var(--font-narrow); font-weight: 500; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  background: var(--text-hi); color: var(--surface-0);
+  transition: background 0.2s;
+}
+.cta-tile { width: 44px; display: flex; align-items: center; justify-content: center; background: var(--blue); color: #fff; transition: background 0.2s; }
+.cta-tile svg { width: 16px; height: 16px; transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1); }
+.cta:hover .cta-cap { background: #fff; }
+.cta:hover .cta-tile { background: var(--blue-hi); }
+.cta:hover .cta-tile svg { transform: translateX(3px); }
+.cta-ghost .cta-cap { background: rgba(140, 170, 220, 0.14); color: var(--text-hi); }
+.cta-ghost:hover .cta-cap { background: rgba(140, 170, 220, 0.26); }
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.foot { border-top: 1px solid var(--line); }
+.foot-inner { max-width: 78rem; margin: 0 auto; padding: var(--gap-5) var(--gap-4); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--gap-4); font-size: var(--step--1); color: var(--text-dim); }
+.foot a { color: var(--text-lo); text-underline-offset: 4px; text-decoration-color: var(--line-strong); }
+.foot a:hover { color: var(--text-hi); text-decoration-color: var(--blue); }
+.foot p { margin: 0; max-width: 34rem; line-height: 1.6; }
 .linklike { font: inherit; background: none; border: 0; padding: 0; color: var(--text-lo); text-decoration: underline; cursor: pointer; }
-@media (max-width: 46rem) {
-  .nav { flex-wrap: wrap; gap: var(--gap-2); }
-  .nav-links { order: 2; flex-basis: 100%; gap: var(--gap-3); overflow-x: auto; scrollbar-width: none; padding-bottom: var(--gap-1); }
+@media (max-width: 60rem) {
+  .nav { flex-wrap: wrap; gap: var(--gap-2); padding-top: var(--gap-2); }
+  .nav-links { order: 2; flex-basis: 100%; gap: 1.25rem; overflow-x: auto; scrollbar-width: none; padding-bottom: var(--gap-1); }
   .nav-links::-webkit-scrollbar { display: none; }
 }
 
@@ -227,3 +291,7 @@
 .empty-card p { margin: 0; color: var(--text-lo); }
 .row[data-verdict="rejected"] { background: var(--held-wash); }
 .verdict-live { box-shadow: inset 3px 0 0 var(--text-hi); margin: 0; }
+
+/* Page titles at K2's section scale. */
+h1.section-title { font-size: clamp(2.25rem, 4.6vw, 3.75rem); letter-spacing: -0.03em; line-height: 1; margin-bottom: var(--gap-3); }
+.profile-head h1.section-title { font-size: clamp(1.9rem, 3.6vw, 3rem); word-break: break-word; }

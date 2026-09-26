@@ -2,13 +2,14 @@
 
 :root {
   --font-ui: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-num: var(--font-plex-mono), ui-monospace, Menlo, monospace;
+  --font-narrow: var(--font-archivo-narrow), var(--font-archivo), system-ui, sans-serif;
+  --font-num: var(--font-jetbrains), ui-monospace, Menlo, monospace;
 }
 
 .shell {
   max-width: 78rem;
   margin: 0 auto;
-  padding: var(--gap-5) var(--gap-4) 6rem;
+  padding: clamp(2.5rem, 7vw, 5.5rem) var(--gap-4) 6rem;
 }
 
 /* ── Annunciator band ─────────────────────────────────────────────────────
@@ -22,44 +23,42 @@
   z-index: 40;
   display: flex;
   align-items: stretch;
-  gap: 0;
   min-height: var(--band-h);
-  background: var(--surface-sunk);
+  background: color-mix(in srgb, var(--surface-sunk) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   overflow-x: auto;
   scrollbar-width: none;
+  font-family: var(--font-num);
 }
 .band::-webkit-scrollbar { display: none; }
 
+/* The mode, first and loudest — the belt's equivalent of K2's LIVE lamp. */
 .band-mark {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   padding-inline: var(--gap-3);
-  font-variation-settings: "wdth" 118;
-  font-weight: 700;
-  font-size: var(--step-0);
-  letter-spacing: 0.02em;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   border-right: 1px solid var(--line);
   white-space: nowrap;
 }
 
 .cell {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1px;
-  padding: 0.3rem var(--gap-3);
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 var(--gap-3);
   border-right: 1px solid var(--line);
   white-space: nowrap;
+  font-size: 12px;
 }
-.cell-k {
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-.cell-v { font-size: var(--step-0); font-weight: 500; }
+.cell-k { letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); }
+.cell-v { font-weight: 500; }
 
 /* Lamp: an annunciator signals state by illuminating, never by changing hue
    for decoration. */
@@ -83,22 +82,11 @@
 /* Paper mode is STRUCTURAL, not a badge. Mistaking paper for live is the
    catastrophic failure in this product, so it changes the chrome itself. */
 .band[data-mode="paper"] {
-  background-image: repeating-linear-gradient(
-    -45deg,
-    transparent 0 7px,
-    var(--held-wash) 7px 14px
-  );
+  background-image: repeating-linear-gradient(-45deg, transparent 0 9px, rgba(224, 161, 60, 0.06) 9px 12px);
 }
-.band[data-mode="paper"] .band-mark::after {
-  content: "PAPER";
-  margin-left: var(--gap-2);
-  padding: 1px 5px;
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
-  color: var(--held);
-  border: 1px solid var(--held);
-  border-radius: var(--radius);
-}
+.band[data-mode="paper"] .band-mark { color: var(--held); }
+.band[data-mode="live"] .band-mark { color: var(--long); }
+.band-mark::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
 /* ── Decision ledger ──────────────────────────────────────────────────────
    The signature. Competing products show fills and hide skips. Here a skip is
@@ -113,7 +101,8 @@
 .row-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--gap-2); }
 .row-venue {
   align-self: center;
-  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.1em;
+  font-family: var(--font-narrow);
+  font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
   padding: 1px 5px; border-radius: var(--radius);
   border: 1px solid var(--line-strong); color: var(--text-lo);
 }
@@ -145,5 +134,5 @@
 .section { margin-top: var(--gap-5); }
 .section .eyebrow { display: block; margin-bottom: var(--gap-2); }
 .section-head { display: flex; margin-bottom: var(--gap-2); align-items: baseline; justify-content: space-between; gap: var(--gap-3); margin-bottom: var(--gap-3); }
-.section-title { margin: 0 0 var(--gap-2); font-size: var(--step-3); font-weight: 600; font-variation-settings: "wdth" 106; letter-spacing: -0.015em; line-height: 1.1; }
+.section-title { margin: 0 0 var(--gap-2); font-size: var(--step-3); font-weight: 400; letter-spacing: -0.022em; line-height: 1.06; }
 .section-note { margin: 0; font-size: var(--step-0); color: var(--text-lo); max-width: 38rem; line-height: 1.5; }

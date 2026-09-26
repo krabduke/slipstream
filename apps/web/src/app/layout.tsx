@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { Archivo, IBM_Plex_Mono } from "next/font/google"
+import { Archivo, Archivo_Narrow, JetBrains_Mono } from "next/font/google"
+import { Footer } from "@/components/Footer"
 import { LiveBand } from "@/components/LiveBand"
 import { Nav } from "@/components/Nav"
 import "./globals.css"
@@ -13,10 +14,17 @@ const archivo = Archivo({
   display: "swap",
 })
 
-const plexMono = IBM_Plex_Mono({
+const archivoNarrow = Archivo_Narrow({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-archivo-narrow",
+  display: "swap",
+})
+
+const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-plex-mono",
+  variable: "--font-jetbrains",
   display: "swap",
 })
 
@@ -29,11 +37,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${archivoNarrow.variable} ${jetbrains.variable}`}>
       <body>
-        <LiveBand />
         <Nav />
+        <LiveBand />
         <main className="shell">{children}</main>
+        <Footer />
       </body>
     </html>
   )

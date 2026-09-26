@@ -1,19 +1,23 @@
 import Link from "next/link"
+import { Mark } from "./Mark"
+import { NavLinks } from "./NavLinks"
 import { WalletButton } from "./WalletButton"
 
-/** Section navigation, under the status band (which stays a status strip). */
+/** The header, in K2's arrangement: lockup, section links, sign-in. The status band sits under it. */
 export function Nav() {
   return (
-    <nav className="nav" aria-label="Sections">
-      <div className="nav-links">
-        <Link href="/">Overview</Link>
-        <Link href="/traders">Traders</Link>
-        <Link href="/follows">Following</Link>
-        <Link href="/activity">Activity</Link>
-        <Link href="/method">How scores work</Link>
-        <Link href="/settings">Settings</Link>
-      </div>
-      <WalletButton />
-    </nav>
+    <header className="topbar">
+      <nav className="nav" aria-label="Sections">
+        <Link href="/" className="lockup" aria-label="Slipstream, home">
+          <Mark />
+          <span className="lockup-text">
+            <span className="lockup-name">SLIPSTREAM</span>
+            <span className="lockup-sub">K2 Capital</span>
+          </span>
+        </Link>
+        <NavLinks />
+        <WalletButton />
+      </nav>
+    </header>
   )
 }

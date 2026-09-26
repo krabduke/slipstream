@@ -14,31 +14,35 @@
    Never use a signal hue for branding, decoration, or hover.
    ========================================================================= */
 
+/* One committed dark ground, shared with k2capitalmanagement.xyz: a blue-biased
+   near-black, off-white ink, hairlines drawn in pale blue. Blue is the house
+   colour — marks, the button tile, focus — and never carries data. */
 :root {
-  /* light is the base definition; every token is defined here */
-  --surface-0: #f1f4f7;
-  --surface-1: #ffffff;
-  --surface-2: #e6ebf1;
-  --surface-sunk: #dde4ec;
-  --line: #cfd8e2;
-  --line-strong: #aab7c6;
+  --surface-0: #04070d;
+  --surface-1: #0a111d;
+  --surface-2: #111b2c;
+  --surface-sunk: #03050a;
+  --line: rgba(157, 192, 255, 0.13);
+  --line-strong: rgba(157, 192, 255, 0.3);
 
-  --text-hi: #101720;
-  --text-lo: #52616f;
-  --text-dim: #7d8b99;
+  --text-hi: #eef1f5;
+  --text-lo: #8fa1b8;
+  --text-dim: #5d6d84;
 
-  --long: #14794a;
-  --short: #bd2b31;
-  --held: #8f5e0d;
+  --long: #2fd27a;
+  --short: #f05a5a;
+  --held: #e0a13c;
 
-  --long-wash: #14794a1a;
-  --short-wash: #bd2b311a;
-  --held-wash: #e8a41f1c;
+  --long-wash: #2fd27a1a;
+  --short-wash: #f05a5a1c;
+  --held-wash: #e0a13c1f;
 
-  --focus: #101720;
+  --blue: #1f6dff;
+  --blue-hi: #3f83ff;
+  --blue-pale: #9dc0ff;
+  --deep: #071a3d;
 
-  --font-ui: "Archivo", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --focus: #1f6dff;
 
   --step--1: 0.75rem;
   --step-0: 0.875rem;
@@ -53,64 +57,24 @@
   --gap-4: 1.5rem;
   --gap-5: 2.5rem;
 
-  --radius: 3px;
-  --band-h: 2.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --surface-0: #0f1419;
-    --surface-1: #161d24;
-    --surface-2: #1e2730;
-    --surface-sunk: #0a0e12;
-    --line: #2a343f;
-    --line-strong: #3d4a58;
-
-    --text-hi: #e7edf3;
-    --text-lo: #93a1b0;
-    --text-dim: #64727f;
-
-    --long: #35c07a;
-    --short: #ef5350;
-    --held: #e0a13c;
-
-    --long-wash: #35c07a1f;
-    --short-wash: #ef53501f;
-    --held-wash: #e0a13c26;
-
-    --focus: #e7edf3;
-  }
-}
-
-:root[data-theme="dark"] {
-  --surface-0: #0f1419;
-  --surface-1: #161d24;
-  --surface-2: #1e2730;
-  --surface-sunk: #0a0e12;
-  --line: #2a343f;
-  --line-strong: #3d4a58;
-
-  --text-hi: #e7edf3;
-  --text-lo: #93a1b0;
-  --text-dim: #64727f;
-
-  --long: #35c07a;
-  --short: #ef5350;
-  --held: #e0a13c;
-
-  --long-wash: #35c07a1f;
-  --short-wash: #ef53501f;
-  --held-wash: #e0a13c26;
-
-  --focus: #e7edf3;
+  --radius: 0;
+  --band-h: 2.25rem;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(110% 55rem at 50% -12rem, var(--deep) 0%, transparent 70%),
+    var(--surface-0);
+  background-repeat: no-repeat;
+}
+
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--surface-0);
   color: var(--text-hi);
   font-family: var(--font-ui);
   font-size: var(--step-0);
@@ -132,16 +96,20 @@ html, body {
 .sig-short { color: var(--short); }
 .sig-held  { color: var(--held); }
 
-/* Signage voice — Archivo's width axis, used only for structural labels. */
+/* Signage voice, as on k2capitalmanagement.xyz: Archivo Narrow, tracked,
+   pinned by the blue drafting square. */
 .eyebrow {
-  font-family: var(--font-ui);
-  font-variation-settings: "wdth" 112;
-  font-size: var(--step--1);
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-narrow);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--blue-pale);
 }
+.eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--blue); flex: none; }
 
 a { color: inherit; }
 
