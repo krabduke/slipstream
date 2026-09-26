@@ -4,7 +4,7 @@
  * stalled refresh is visible, not silent.
  */
 import type { Db } from "@slipstream/db"
-import { finishIntelRun, latestIntelRuns, startIntelRun, upsertTraderProfiles } from "@slipstream/db/queries/index.js"
+import { finishIntelRun, latestIntelRuns, recentlyProfiled, startIntelRun, upsertTraderProfiles } from "@slipstream/db/queries/index.js"
 import { refreshHyperliquid } from "@slipstream/intel/hyperliquid"
 import { refreshPolymarket } from "@slipstream/intel/polymarket"
 import type { Logger } from "@slipstream/shared/log/index.js"
@@ -19,10 +19,12 @@ export async function runIntel(db: Db, venue: IntelVenue, log: Logger, opts: { l
     const onBatch = async (batch: Parameters<typeof upsertTraderProfiles>[1]) => {
       written += await upsertTraderProfiles(db, batch)
     }
+    // Resume: anything profiled in the last 3 hours is current enough.
+    const skip = await recentlyProfiled(db, venue, 3)
     const r =
       venue === "hyperliquid"
-        ? await refreshHyperliquid({ limit: opts.limit ?? 200, log: say, onBatch })
-        : await refreshPolymarket({ limit: opts.limit ?? 200, log: say, onBatch })
+        ? await refreshHyperliquid({ limit: opts.limit ?? 200, log: say, onBatch, skip })
+        : await refreshPolymarket({ limit: opts.limit ?? 200, log: say, onBatch, skip })
     await finishIntelRun(db, runId, { candidates: r.candidates, profiled: written, failed: r.failed })
     log.info(`intel ${venue}: ${written} profiles written, ${r.failed} failed, ${r.candidates} candidates`)
     return { written, failed: r.failed }

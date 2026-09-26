@@ -199,3 +199,12 @@ export async function latestIntelRuns(db: Db): Promise<IntelRunSummary[]> {
   // Db is the driver-agnostic PgDatabase, so execute() is typed unknown.
   return (r as unknown as { rows: IntelRunSummary[] }).rows
 }
+
+/** Addresses on a venue profiled within the last `hours`, for resuming a run. */
+export async function recentlyProfiled(db: Db, venue: string, hours: number): Promise<Set<string>> {
+  const rows = await db
+    .select({ address: traderProfiles.address })
+    .from(traderProfiles)
+    .where(and(eq(traderProfiles.venue, venue), gte(traderProfiles.refreshedAt, new Date(Date.now() - hours * 3_600_000))))
+  return new Set(rows.map((r) => r.address))
+}

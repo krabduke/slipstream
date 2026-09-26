@@ -118,6 +118,9 @@ export class CopyEngine {
         errors++
         const msg = e instanceof Error ? e.message : String(e)
         this.log.warn(`copy ${venue} follow ${f.subscriptionId}: ${msg}`.slice(0, 300))
+        // Recording the error must never itself escape: if the ledger write
+        // fails too (e.g. the user was deleted mid-cycle), one follow would
+        // otherwise abort the cycle for every other follow.
         await this.ledgerOnce(`err|${f.subscriptionId}|${msg.slice(0, 80)}`, 15 * 60_000, {
           userId: f.userId,
           subscriptionId: f.subscriptionId,
@@ -128,7 +131,7 @@ export class CopyEngine {
           detail: { problem: msg.slice(0, 300) },
           leaderAddress: f.leaderAddress,
           leaderFillPrice: null,
-        })
+        }).catch((le) => this.log.warn(`copy ${venue}: could not record error for ${f.subscriptionId}: ${le instanceof Error ? le.message : String(le)}`.slice(0, 200)))
       }
     }
     this.lastCycle = { at: Date.now(), follows: follows.length, errors }

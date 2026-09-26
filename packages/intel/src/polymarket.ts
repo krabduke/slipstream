@@ -253,12 +253,15 @@ export async function refreshPolymarket(opts: {
   limit?: number
   concurrency?: number
   log?: (msg: string) => void
+  /** Addresses profiled recently enough to skip, so a restarted run resumes. */
+  skip?: ReadonlySet<string>
   /** Called with every 20 finished profiles, so an interrupted run keeps its progress. */
   onBatch?: (profiles: TraderProfile[]) => Promise<void>
 } = {}): Promise<{ profiles: TraderProfile[]; failed: number; candidates: number }> {
   const log = opts.log ?? (() => {})
-  const candidates = await pmCandidates(opts.limit ?? 200)
-  log(`[intel/pm] ${candidates.length} candidates from the leaderboards`)
+  const all = await pmCandidates(opts.limit ?? 200)
+  const candidates = all.filter((c) => !opts.skip?.has(c.address))
+  log(`[intel/pm] ${all.length} candidates from the leaderboards, ${all.length - candidates.length} fresh enough to skip`)
   const flush = batcher(opts.onBatch)
   const { ok, failed } = await pool(candidates, opts.concurrency ?? 2, async (c) => flush.add(await profilePolymarket(c)))
   await flush.done()
