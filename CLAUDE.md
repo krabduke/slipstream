@@ -6,7 +6,7 @@ What exists, departures from the plan, and operations: **`docs/BUILD.md`** (read
 
 ## Hard rules
 
-- **Never run the fleet** (`fleet/`). It dispatches to OpenCode/DashScope, which the owner has ruled out.
+- The agent fleet is retired (its dispatcher was removed); build directly.
 - **Only trade-only keys.** Nothing may store a key without `verifyDelegation` passing first. The web
   server never sees a plaintext key (the browser seals it to the engine's public key).
 - **Exits are never gated.** `ExitIntent` must never reach the risk gate; kill switches cause exits, never block them.

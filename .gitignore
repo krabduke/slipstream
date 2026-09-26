@@ -18,3 +18,7 @@ secrets/
 .fleet-logs/
 .vercel
 .env*
+
+# local agent tooling
+.agents/
+.claude/skills/

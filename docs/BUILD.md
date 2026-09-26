@@ -1,8 +1,7 @@
 # Build log and plan (solo build, from 2026-09-26)
 
-The agent fleet described in `08-build-fleet.md` is retired. `fleet/` is kept
-for history only and must not be run: it dispatches work to OpenCode on
-DashScope, which the owner has ruled out. Everything below is built directly.
+The agent fleet described in `08-build-fleet.md` is retired and its dispatcher
+has been removed from the repo. Everything below is built directly.
 
 ## Scope agreed with the owner (2026-09-26)
 
