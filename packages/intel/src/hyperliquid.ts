@@ -12,7 +12,7 @@
  * The per-IP limit (1,200 weight/min) is shared with the copy engine on the
  * same host, so this spends at most `weightPerMinute` of it.
  */
-import { WeightBudget, fetchJson, pool } from "./http.js"
+import { WeightBudget, batcher, fetchJson, pool } from "./http.js"
 import {
   closingOrderStats,
   consistency,
@@ -294,13 +294,17 @@ export async function refreshHyperliquid(opts: {
   weightPerMinute?: number
   concurrency?: number
   log?: (msg: string) => void
+  /** Called with every 20 finished profiles, so an interrupted run keeps its progress. */
+  onBatch?: (profiles: TraderProfile[]) => Promise<void>
 } = {}): Promise<{ profiles: TraderProfile[]; failed: number; candidates: number }> {
   const log = opts.log ?? (() => {})
   const rows = await fetchLeaderboard()
   const candidates = selectCandidates(rows, opts.limit ?? 200)
   log(`[intel/hl] leaderboard ${rows.length} accounts -> ${candidates.length} candidates`)
   const budget = new WeightBudget(opts.weightPerMinute ?? 700)
-  const { ok, failed } = await pool(candidates, opts.concurrency ?? 3, (c) => profileHyperliquid(c, budget))
+  const flush = batcher(opts.onBatch)
+  const { ok, failed } = await pool(candidates, opts.concurrency ?? 3, async (c) => flush.add(await profileHyperliquid(c, budget)))
+  await flush.done()
   for (const f of failed.slice(0, 5)) log(`[intel/hl] failed ${f.item.address}: ${f.error}`)
   return { profiles: ok, failed: failed.length, candidates: candidates.length }
 }

@@ -39,6 +39,18 @@ export const DEFAULT_MAX_SLIPPAGE_BPS: Readonly<Record<VenueId, number>> = Objec
  * from a string, and because callers get a fresh frozen object rather than a
  * shared one they might be tempted to mutate.
  */
+/**
+ * How old a leader's fill may be before copying it counts as chasing.
+ * Hyperliquid fills arrive over a WebSocket within a second; Polymarket's are
+ * read by polling (30s) behind the venue's own indexing delay, so 5s there
+ * would refuse every copy. The slippage gate (300 bps) still refuses to chase
+ * a price that has already run.
+ */
+export const DEFAULT_MAX_SIGNAL_AGE_MS: Readonly<Record<VenueId, number>> = Object.freeze({
+  hyperliquid: 5_000,
+  polymarket: 120_000,
+})
+
 export const DEFAULT_LIMITS = (venue: VenueId): RiskLimits =>
   Object.freeze({
     /** $1000 of notional in any single position. */
@@ -52,7 +64,7 @@ export const DEFAULT_LIMITS = (venue: VenueId): RiskLimits =>
     maxSlippageBps: DEFAULT_MAX_SLIPPAGE_BPS[venue],
     /** Five seconds. Older than this and the price that made the signal
      *  attractive is not the price on the screen any more. */
-    maxSignalAgeMs: 5000,
+    maxSignalAgeMs: DEFAULT_MAX_SIGNAL_AGE_MS[venue],
     /** Consume at most 20% of the depth inside the slippage band. */
     maxBookPct: money.parse("0.20", FRACTION_SCALE),
     /** Stop opening for the day after losing 10% of equity. */

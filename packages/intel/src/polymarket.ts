@@ -13,7 +13,7 @@
  * capital the wallet shows (portfolio value plus the curve's peak). Both are
  * labelled as such in the UI; neither is comparable 1:1 with Hyperliquid's.
  */
-import { fetchJson, pool, sleep } from "./http.js"
+import { batcher, fetchJson, pool, sleep } from "./http.js"
 import { consistency, maxDrawdown, weeklyChanges, weeklySharpe, type Point } from "./metrics.js"
 import { isCopyable, scoreFrom, scoreParts } from "./score.js"
 import type { CopyFlag, OpenPosition, RecentTrade, TraderProfile, WindowPnl } from "./types.js"
@@ -253,11 +253,15 @@ export async function refreshPolymarket(opts: {
   limit?: number
   concurrency?: number
   log?: (msg: string) => void
+  /** Called with every 20 finished profiles, so an interrupted run keeps its progress. */
+  onBatch?: (profiles: TraderProfile[]) => Promise<void>
 } = {}): Promise<{ profiles: TraderProfile[]; failed: number; candidates: number }> {
   const log = opts.log ?? (() => {})
   const candidates = await pmCandidates(opts.limit ?? 200)
   log(`[intel/pm] ${candidates.length} candidates from the leaderboards`)
-  const { ok, failed } = await pool(candidates, opts.concurrency ?? 2, profilePolymarket)
+  const flush = batcher(opts.onBatch)
+  const { ok, failed } = await pool(candidates, opts.concurrency ?? 2, async (c) => flush.add(await profilePolymarket(c)))
+  await flush.done()
   for (const f of failed.slice(0, 5)) log(`[intel/pm] failed ${f.item.address}: ${f.error}`)
   return { profiles: ok, failed: failed.length, candidates: candidates.length }
 }

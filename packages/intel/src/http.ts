@@ -73,3 +73,26 @@ export async function pool<T, R>(
   await Promise.all(workers)
   return { ok, failed }
 }
+
+/** Collects results and hands them to `sink` in groups of `size`. */
+export function batcher<T>(sink: ((items: T[]) => Promise<void>) | undefined, size = 20) {
+  let buf: T[] = []
+  let chain = Promise.resolve()
+  const push = () => {
+    if (!sink || !buf.length) return
+    const out = buf
+    buf = []
+    chain = chain.then(() => sink(out))
+  }
+  return {
+    add(item: T): T {
+      buf.push(item)
+      if (buf.length >= size) push()
+      return item
+    },
+    async done(): Promise<void> {
+      push()
+      await chain
+    },
+  }
+}

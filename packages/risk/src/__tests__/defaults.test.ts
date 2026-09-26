@@ -32,10 +32,12 @@ describe("DEFAULT_LIMITS", () => {
     expect(DEFAULT_MAX_SLIPPAGE_BPS).toEqual({ hyperliquid: 50, polymarket: 300 })
   })
 
-  it("differs between venues only in slippage", () => {
-    const { maxSlippageBps: _hl, ...hyperliquid } = DEFAULT_LIMITS("hyperliquid")
-    const { maxSlippageBps: _pm, ...polymarket } = DEFAULT_LIMITS("polymarket")
+  it("differs between venues only in slippage and signal age", () => {
+    const { maxSlippageBps: _hl, maxSignalAgeMs: hlAge, ...hyperliquid } = DEFAULT_LIMITS("hyperliquid")
+    const { maxSlippageBps: _pm, maxSignalAgeMs: pmAge, ...polymarket } = DEFAULT_LIMITS("polymarket")
     expect(polymarket).toStrictEqual(hyperliquid)
+    // Polymarket fills are polled, not pushed: 5s would refuse every copy.
+    expect([hlAge, pmAge]).toEqual([5_000, 120_000])
   })
 
   it("hands out a fresh frozen object, never a shared one", () => {

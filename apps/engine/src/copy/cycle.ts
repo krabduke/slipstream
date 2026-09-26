@@ -21,7 +21,7 @@ import type {
   UserId,
 } from "@slipstream/shared"
 import type { Logger } from "@slipstream/shared/log/index.js"
-import { plan } from "@slipstream/copy"
+import { plan, STALE_REF_AGE_MS } from "@slipstream/copy"
 import { DEFAULT_LIMITS, evaluateAll, type MarketFilter, type RiskContext, type RiskLimits } from "@slipstream/risk"
 import { PAPER_COSTS, applyFill, simulateFill, type PaperPosition } from "@slipstream/exec/paper.js"
 import type { Book, MarketConstraints, Position } from "@slipstream/venues"
@@ -237,8 +237,35 @@ export class CopyEngine {
     for (const skip of planned.skips) if (skip.reason !== "below_tolerance_band") await this.logSkip(f, skip, leader.labels)
 
     const limits = limitsFrom(venue, profiles.find((p) => p.subscriptionId === f.subscriptionId) ?? profiles.find((p) => p.subscriptionId === null))
+    // Positions the leader held before we started watching carry a synthetic
+    // reference (planner: now - STALE_REF_AGE_MS). The signal-age gate refuses
+    // them by design; logging each one on every tick would bury the ledger, so
+    // they become one standing line per follow instead.
+    const preexisting: MarketId[] = []
     for (const trade of planned.trades) {
+      if (trade.leaderRef && now - trade.leaderRef.leaderFillTs >= STALE_REF_AGE_MS) {
+        preexisting.push(trade.marketId)
+        continue
+      }
       await this.gateAndTrade(venue, f, trade, { limits, kill, followerEquity, followerPositions, labels: leader.labels, marks })
+    }
+    if (preexisting.length) {
+      await this.ledgerOnce(`preexisting|${f.subscriptionId}|${preexisting.length}`, 24 * 3_600_000, {
+        userId: f.userId,
+        subscriptionId: f.subscriptionId,
+        venue,
+        marketId: "*",
+        verdict: "skipped",
+        reasonCode: "signal_stale",
+        detail: {
+          mode: f.isPaper ? "paper" : "live",
+          label: `${preexisting.length} position${preexisting.length === 1 ? "" : "s"} opened before you followed`,
+          problem: "Only new moves are copied. Positions the leader already held are not chased at today's prices.",
+          markets: preexisting.slice(0, 30).map((m) => leader.labels.get(m) ?? m).join(", "),
+        },
+        leaderAddress: f.leaderAddress,
+        leaderFillPrice: null,
+      })
     }
   }
 

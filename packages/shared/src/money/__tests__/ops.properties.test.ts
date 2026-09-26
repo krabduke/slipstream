@@ -267,7 +267,9 @@ describe("cmp is a total order", () => {
       fc.property(arbDecimal, arbDecimal, (a, b) => {
         const order = money.cmp(a, b)
         expect(money.cmp(a, a)).toBe(0)
-        expect(money.cmp(b, a)).toBe(-order)
+        // `-order` is -0 when a == b, and toBe uses Object.is, where -0 !== 0.
+        // That made this test fail only on the rare runs that drew equal values.
+        expect(money.cmp(b, a)).toBe(order === 0 ? 0 : -order)
 
         const difference = money.sub(a, b).mantissa
         const sign = difference === 0n ? 0 : difference < 0n ? -1 : 1
