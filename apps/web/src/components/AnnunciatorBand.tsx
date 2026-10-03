@@ -1,3 +1,6 @@
+"use client"
+import { useEffect, useRef, useState } from "react"
+
 /**
  * The annunciator band.
  *
@@ -66,9 +69,32 @@ const pct = (v: number | null) => (v === null ? "—" : `${Math.round(v * 100)}%
 
 export function AnnunciatorBand({ state = DISCONNECTED }: { state?: BandState }) {
   const beat = heartbeatLabel(state.engineHeartbeatSecs)
+  // The band reports a real heartbeat, so a change of state is the one thing
+  // on the page that is actually news. It pulses once on arriving at a new
+  // state and then holds: a band that blinks continuously is wallpaper, and
+  // stops being read inside a minute — which defeats the point of an
+  // annunciator.
+  const signature = `${state.mode}|${state.hyperliquid}|${state.polymarket}|${state.engineHeartbeatSecs === null}`
+  const previous = useRef(signature)
+  const [pulse, setPulse] = useState(false)
+
+  useEffect(() => {
+    if (previous.current === signature) return
+    previous.current = signature
+    setPulse(true)
+    const t = setTimeout(() => setPulse(false), 1200)
+    return () => clearTimeout(t)
+  }, [signature])
 
   return (
-    <div className="band" data-mode={state.mode} role="status" aria-label="System status">
+    <div
+      className="band"
+      data-mode={state.mode}
+      data-state={signature}
+      data-pulse={pulse ? "1" : undefined}
+      role="status"
+      aria-label="System status"
+    >
       <div className="band-mark">{state.mode === "live" ? "Live" : "Paper"}</div>
 
       <div className="cell">

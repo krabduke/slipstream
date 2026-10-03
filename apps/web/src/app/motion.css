@@ -1,0 +1,171 @@
+/* ============================================================
+   MOTION
+
+   The sibling of k2-site's app/motion.css, sharing its tokens and
+   its one rule: something moves because a reading changed or
+   because you acted — not because you scrolled past it.
+
+   This app had no motion at all: no keyframes, four transition
+   declarations in the whole source, and no reduced-motion rule.
+   Everything below is additive — no existing selector is
+   redefined, so nothing here can change a layout.
+   ============================================================ */
+
+:root {
+  --m-quick: 160ms;
+  --m-normal: 320ms;
+  --m-considered: 640ms;
+  --m-draw: 1100ms;
+
+  --m-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --m-settle: cubic-bezier(0.4, 0, 0.2, 1);
+  --m-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --m-hold: 1200ms;
+}
+
+/* ------------------------------------------------------------------
+   The curve draws itself.
+
+   `pathLength="1"` normalises every path to a unit length regardless of
+   its real geometry, so one dash offset animates any curve — no measuring,
+   no JS, and it works on a server-rendered SVG. A cumulative PnL line that
+   draws left to right is the chart stating its own argument in the order
+   the trades happened.
+   ------------------------------------------------------------------ */
+
+.curve-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: k2m-draw var(--m-draw) var(--m-settle) 120ms forwards;
+}
+@keyframes k2m-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* The zero line arrives first — the curve needs something to be measured
+   against before it is worth watching it move. */
+.curve-zero {
+  transform-origin: left center;
+  animation: k2m-zero var(--m-considered) var(--m-settle) forwards;
+}
+@keyframes k2m-zero {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+/* ------------------------------------------------------------------
+   The table settles in.
+
+   A ranked table is a sequence — the order is the content — so the rows
+   arrive in it. The delay is capped at the tenth row: past that the stagger
+   stops reading as order and starts reading as the page being slow.
+   ------------------------------------------------------------------ */
+
+.traders tbody tr {
+  animation: k2m-row var(--m-considered) var(--m-enter) both;
+}
+.traders tbody tr:nth-child(1)  { animation-delay: 0ms; }
+.traders tbody tr:nth-child(2)  { animation-delay: 35ms; }
+.traders tbody tr:nth-child(3)  { animation-delay: 70ms; }
+.traders tbody tr:nth-child(4)  { animation-delay: 105ms; }
+.traders tbody tr:nth-child(5)  { animation-delay: 140ms; }
+.traders tbody tr:nth-child(6)  { animation-delay: 175ms; }
+.traders tbody tr:nth-child(7)  { animation-delay: 210ms; }
+.traders tbody tr:nth-child(8)  { animation-delay: 245ms; }
+.traders tbody tr:nth-child(9)  { animation-delay: 280ms; }
+.traders tbody tr:nth-child(n+10) { animation-delay: 315ms; }
+
+@keyframes k2m-row {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* A row answers the pointer. Border rather than background: the table is
+   dense and a filled row at this size reads as selected, not hovered. */
+.traders tbody tr td {
+  transition: background-color var(--m-quick) var(--m-settle);
+}
+.traders tbody tr:hover td {
+  background-color: rgba(157, 192, 255, 0.05);
+}
+
+/* ------------------------------------------------------------------
+   The band means it.
+
+   It reports the engine's real heartbeat, so its state changing is the one
+   thing on the page that is genuinely news. It pulses once on arriving at a
+   state and then holds — a band that blinks forever is wallpaper, and stops
+   being read within a minute.
+   ------------------------------------------------------------------ */
+
+.band[data-state] {
+  transition: border-color var(--m-normal) var(--m-settle),
+    background-color var(--m-normal) var(--m-settle),
+    color var(--m-normal) var(--m-settle);
+}
+.band[data-pulse="1"] {
+  animation: k2m-pulse var(--m-hold) var(--m-exit);
+}
+@keyframes k2m-pulse {
+  0% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
+  12% { opacity: 0.72; }
+  100% { box-shadow: 0 0 0 10px transparent; opacity: 1; }
+}
+
+/* ------------------------------------------------------------------
+   Actions answer.
+
+   The kind of motion that is always welcome, because it shows what changed
+   rather than decorating what did not.
+   ------------------------------------------------------------------ */
+
+button,
+.cta,
+a.cta {
+  transition: background-color var(--m-quick) var(--m-settle),
+    border-color var(--m-quick) var(--m-settle),
+    color var(--m-quick) var(--m-settle),
+    transform var(--m-quick) var(--m-settle);
+}
+button:active:not(:disabled),
+.cta:active {
+  transform: translateY(1px);
+}
+.cta-tile {
+  transition: transform var(--m-normal) var(--m-enter);
+}
+.cta:hover .cta-tile {
+  transform: translateX(3px);
+}
+
+/* A value that just changed, marked and then let go. */
+.k2m-tick[data-dir="up"] { color: var(--long); }
+.k2m-tick[data-dir="down"] { color: var(--short); }
+.k2m-tick[data-dir] {
+  animation: k2m-settle var(--m-hold) var(--m-exit) forwards;
+}
+@keyframes k2m-settle {
+  0% { background-color: currentColor; }
+  100% { background-color: transparent; }
+}
+
+/* ------------------------------------------------------------------
+   Reduced motion. The app had no such rule anywhere.
+
+   Durations collapse rather than animations being dropped: `k2m-draw`
+   starts at `stroke-dashoffset: 1`, so removing the animation outright
+   would leave every curve invisible. This way they all arrive, at once.
+   ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

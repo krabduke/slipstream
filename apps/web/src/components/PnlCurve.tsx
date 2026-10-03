@@ -25,7 +25,10 @@ export function PnlCurve({ points, height = 180 }: { points: readonly (readonly 
     <figure className="curve">
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label="Cumulative PnL over time">
         <line x1={pad} x2={W - pad} y1={sy(0)} y2={sy(0)} className="curve-zero" />
-        <path d={d} className={`curve-line ${last >= 0 ? "sig-long" : "sig-short"}`} vectorEffect="non-scaling-stroke" />
+        {/* pathLength normalises the curve to a unit length, so one dash offset
+            draws any geometry — the line can draw itself from CSS alone, with
+            nothing measured and nothing shipped to the client. */}
+        <path d={d} className={`curve-line ${last >= 0 ? "sig-long" : "sig-short"}`} pathLength={1} vectorEffect="non-scaling-stroke" />
       </svg>
       <figcaption className="curve-axis num">
         <span>{fmt(x0)}</span>

@@ -6,6 +6,7 @@ import { Nav } from "@/components/Nav"
 import "./globals.css"
 import "./ui.css"
 import "./intel.css"
+import "./motion.css"
 
 const archivo = Archivo({
   subsets: ["latin"],
